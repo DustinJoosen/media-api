@@ -11,7 +11,12 @@ namespace Media.Core.Entities
     public class AuthToken : AuditableEntity
     {
         [Key, Required]
-        public Guid Token { get; set; }
+        public string Token { get; set; }
+
+        [Required, StringLength(64)]
+        public string Name { get; set; }
+
+        public DateTime? ExpiresAt { get; set; }
 
         [Required]
         public AuthTokenPermissions Permissions { get; set; }

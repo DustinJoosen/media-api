@@ -18,6 +18,10 @@ namespace Media.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<AuthToken>()
+                .HasIndex(token => token.Name)
+                .IsUnique();
+
             base.OnModelCreating(modelBuilder);
         }
 

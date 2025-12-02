@@ -26,7 +26,7 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="tokenReq">token creation information.</param>
         /// <returns>Created token.</returns>
-        public async Task<CreateTokenResponse> CreateToken(CreateTokenRequest tokenReq)
+        public async virtual Task<CreateTokenResponse> CreateToken(CreateTokenRequest tokenReq)
         {
             if (await this.IsNameUsed(tokenReq.Name))
                 throw new AlreadyUsedException($"Token name '{tokenReq.Name}' is already being used");
@@ -38,7 +38,8 @@ namespace Media.Infrastructure.Services
                 Token = token,
                 Name = tokenReq.Name,
                 ExpiresAt = tokenReq.ExpiresAt,
-                Permissions = AuthTokenPermissions.CanCreate
+                Permissions = AuthTokenPermissions.CanCreate,
+                IsActive = true
             });
 
             await this._context.SaveChangesAsync();
@@ -46,25 +47,25 @@ namespace Media.Infrastructure.Services
         }
 
         /// <summary>
-        /// Finds the expiration date of an authorization token.
+        /// Finds the info of an authorization token.
         /// </summary>
         /// <param name="findTokenReq">token finding information.</param>
-        /// <returns>Expiration date of token.</returns>
-        public async Task<FindTokenExpirationResponse> FindTokenExpiration(FindTokenExpirationRequest findTokenReq)
+        /// <returns>info of the token.</returns>
+        public async virtual Task<FindTokenInfoResponse> FindTokenInfo(FindTokenInfoRequest findTokenReq)
         {
             var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == findTokenReq.Token);
             if (authToken == null)
                 throw new NotFoundException($"Token '{findTokenReq.Token}' does not exist");
 
-            return new(authToken.ExpiresAt);
+            return new(authToken.ExpiresAt, authToken.IsActive);
         }
 
         /// <summary>
-        /// Resets an authorization token.
+        /// Deactivates an authorization token.
         /// </summary>
-        /// <param name="token">token to reset.</param>
+        /// <param name="token">token to deactivate.</param>
         /// <returns>Whether the operation succeeded.</returns>
-        public async Task ResetToken(string token)
+        public async virtual Task DeactivateToken(string token)
         {
             var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token);
             if (authToken == null)
@@ -72,12 +73,13 @@ namespace Media.Infrastructure.Services
 
             try
             {
-                this._context.AuthTokens.Remove(authToken);
+                authToken.IsActive = false;
+                this._context.AuthTokens.Update(authToken);
                 await this._context.SaveChangesAsync();
             } 
             catch
             {
-                throw new DatabaseOperationException($"Could not reset token");
+                throw new DatabaseOperationException($"Could not deactivate token");
             }
         }
 

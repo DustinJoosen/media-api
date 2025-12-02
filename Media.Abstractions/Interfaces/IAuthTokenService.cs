@@ -17,17 +17,17 @@ namespace Media.Abstractions.Interfaces
         Task<CreateTokenResponse> CreateToken(CreateTokenRequest tokenReq);
         
         /// <summary>
-        /// Finds the expiration date of an authorization token.
+        /// Finds the info of an authorization token.
         /// </summary>
         /// <param name="findTokenReq">token finding information.</param>
-        /// <returns>Expiration date of token.</returns>
-        Task<FindTokenExpirationResponse> FindTokenExpiration(FindTokenExpirationRequest findTokenReq);
+        /// <returns>info of the token.</returns>
+        Task<FindTokenInfoResponse> FindTokenInfo(FindTokenInfoRequest findTokenReq);
 
         /// <summary>
-        /// Resets an authorization token.
+        /// Deactivates an authorization token.
         /// </summary>
-        /// <param name="token">token to reset.</param>
+        /// <param name="token">token to deactivate.</param>
         /// <returns>Whether the operation succeeded.</returns>
-        Task ResetToken(string token);
+        Task DeactivateToken(string token);
     }
 }

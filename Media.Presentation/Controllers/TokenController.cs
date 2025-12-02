@@ -21,16 +21,16 @@ namespace Media.Presentation.Controllers
             await this._tokenService.CreateToken(tokenReq);
 
         [HttpGet]
-        [Route("find-expiration")]
-        public async Task<FindTokenExpirationResponse> FindTokenExpiration([FromQuery] FindTokenExpirationRequest findTokenReq) =>
-            await this._tokenService.FindTokenExpiration(findTokenReq);
+        [Route("info")]
+        public async Task<FindTokenInfoResponse> FindTokenInfo([FromQuery] FindTokenInfoRequest findTokenReq) =>
+            await this._tokenService.FindTokenInfo(findTokenReq);
 
         [HttpDelete]
-        [Route("reset-token")]
-        public async Task<OkObjectResult> ResetToken(string token)
+        [Route("deactivate-token")]
+        public async Task<OkObjectResult> DeactivateToken(string token)
         {
-            await this._tokenService.ResetToken(token);
-            return this.Ok($"Token '{token}' successfully reset.");
+            await this._tokenService.DeactivateToken(token);
+            return this.Ok($"Token '{token}' successfully deactivated.");
         }
     }
 }

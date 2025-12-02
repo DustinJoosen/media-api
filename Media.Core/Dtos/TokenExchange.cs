@@ -21,15 +21,16 @@ namespace Media.Core.Dtos
 
 
     /// <summary>
-    /// Input for finding token expiration.
+    /// Input for finding token info.
     /// </summary>
     /// <param name="Token">Token to find.</param>
-    public record FindTokenExpirationRequest(string Token);
+    public record FindTokenInfoRequest(string Token);
 
     /// <summary>
-    /// Output for finding token expiration.
+    /// Output for finding token info.
     /// </summary>
-    /// <param name="Token">Expiration date.</param>
-    public record FindTokenExpirationResponse(DateTime? ExpiresAt);
+    /// <param name="ExpiresAt">Expiration date.</param>
+    /// <param name="IsActive">If the token is active.</param>
+    public record FindTokenInfoResponse(DateTime? ExpiresAt, bool IsActive);
 
 }

@@ -11,6 +11,7 @@ namespace Media.Persistence
     public class MediaDbContext : DbContext
     {
         public DbSet<AuthToken> AuthTokens { get; set; }
+        public DbSet<MediaItem> MediaItems { get; set; }
 
         public MediaDbContext(DbContextOptions options) : base(options)
         {

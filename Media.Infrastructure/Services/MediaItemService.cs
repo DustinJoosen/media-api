@@ -35,6 +35,9 @@ namespace Media.Infrastructure.Services
             if (!tokenInfo.IsActive)
                 throw new UnauthorizedException($"Could not upload this media item. Provided token is deactivated.");
 
+            if (tokenInfo.ExpiresAt < DateTime.Now)
+                throw new UnauthorizedException($"Could not upload this media item. Provided token is expired.");
+
             var mediaItem = new MediaItem
             {
                 Id = Guid.NewGuid(),

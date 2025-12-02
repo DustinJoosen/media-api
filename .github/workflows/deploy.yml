@@ -1,0 +1,49 @@
+name: Deploy Media API
+
+on:
+  push:
+    branches:
+      - main
+      
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+      - name: Build project
+        working-directory: ./Media.Presentation
+        run: |
+          dotnet restore
+          dotnet publish -c Release -o ../media-artifact
+
+      - name: Package
+        run: |
+          tar czf media-artifact.tar.gz -C media-artifact .
+
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+
+      - name: Upload artifact
+        run: |
+          scp media-artifact.tar.gz \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/
+
+      - name: Deploy and restart service
+        run: |
+          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
+            rm -r /home/syter/Services/media &&
+            mkdir -p /home/syter/Services/media &&
+            tar xzf /tmp/media-artifact.tar.gz -C /home/syter/Services/media &&
+            sudo systemctl restart media.service
+          "

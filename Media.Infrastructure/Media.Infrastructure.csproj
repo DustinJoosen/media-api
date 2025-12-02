@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Media.Abstractions\Media.Abstractions.csproj" />
+    <ProjectReference Include="..\Media.Core\Media.Core.csproj" />
+    <ProjectReference Include="..\Media.Persistence\Media.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>

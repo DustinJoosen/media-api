@@ -15,6 +15,10 @@ namespace Media.Presentation.Controllers
             this._mediaItemService = mediaItemService;
         }
 
+        /// <summary>
+        /// Uploads a media item to the file storage.
+        /// </summary>
+        /// <returns>Id of the created media item.</returns>
         [HttpPost]
         [Route("upload")]
         public async Task<UploadMediaItemResponse> UploadMediaItem([FromForm] UploadMediaItemRequest mediaItemReq) =>

@@ -7,6 +7,9 @@ namespace Media.Presentation.Controllers
     [ApiController]
     public class HealthController : ControllerBase
     {
+        /// <summary>
+        /// Checks if the API is running fine.
+        /// </summary>
         [HttpGet]
         [Route("")]
         public IActionResult Health() =>

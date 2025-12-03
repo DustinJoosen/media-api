@@ -1,11 +1,12 @@
 using Media.Persistence;
 using Media.Infrastructure;
+using Media.Presentation.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGeneration();
 
 builder.Services.ConfigurePersistence(builder.Configuration);
 builder.Services.ConfigureInfrastructure(builder.Configuration);

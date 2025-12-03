@@ -25,10 +25,11 @@ namespace Media.Core.Entities
         public bool IsActive { get; set; }
     }
 
+    [Flags]
     public enum AuthTokenPermissions
     {
-        CanRead,
-        CanCreate,
-        CanDelete
+        CanRead = 1,
+        CanCreate = 2,
+        CanDelete = 4,
     }
 }

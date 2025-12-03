@@ -57,7 +57,7 @@ namespace Media.Infrastructure.Services
             if (authToken == null)
                 throw new NotFoundException($"Token '{findTokenReq.Token}' does not exist");
 
-            return new(authToken.ExpiresAt, authToken.IsActive);
+            return new(authToken.ExpiresAt, authToken.IsActive, authToken.Permissions);
         }
 
         /// <summary>

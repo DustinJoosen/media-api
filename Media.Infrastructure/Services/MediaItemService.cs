@@ -28,20 +28,24 @@ namespace Media.Infrastructure.Services
         /// Upload a media item and store it locally.
         /// </summary>
         /// <param name="mediaItemReq">Uploading info.</param>
+        /// <param name="token">Token to proof you have writing rights.</param>
         /// <returns>Created media item object.</returns>
-        public async virtual Task<UploadMediaItemResponse> UploadMediaItem(UploadMediaItemRequest mediaItemReq)
+        public async virtual Task<UploadMediaItemResponse> UploadMediaItem(UploadMediaItemRequest mediaItemReq, string token)
         {
-            var tokenInfo = await this._tokenService.FindTokenInfo(new(mediaItemReq.CreatedByToken));
+            var tokenInfo = await this._tokenService.FindTokenInfo(new FindTokenInfoRequest(token));
             if (!tokenInfo.IsActive)
-                throw new UnauthorizedException($"Could not upload this media item. Provided token is deactivated.");
+                throw new UnauthorizedException("Could not upload this media item. Provided token is deactivated.");
 
             if (tokenInfo.ExpiresAt < DateTime.Now)
-                throw new UnauthorizedException($"Could not upload this media item. Provided token is expired.");
+                throw new UnauthorizedException("Could not upload this media item. Provided token is expired.");
+
+            if (!tokenInfo.Permissions.HasFlag(AuthTokenPermissions.CanCreate))
+                throw new UnauthorizedException("Could not upload this media item. Provided token does not have the CanCreate permission.");
 
             var mediaItem = new MediaItem
             {
                 Id = Guid.NewGuid(),
-                CreatedByToken = mediaItemReq.CreatedByToken,
+                CreatedByToken = token,
                 Title = mediaItemReq.Title,
                 Description = mediaItemReq.Description
             };

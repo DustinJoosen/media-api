@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Media.Core.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -31,6 +32,7 @@ namespace Media.Core.Dtos
     /// </summary>
     /// <param name="ExpiresAt">Expiration date.</param>
     /// <param name="IsActive">If the token is active.</param>
-    public record FindTokenInfoResponse(DateTime? ExpiresAt, bool IsActive);
+    /// <param name="Permissions">Permissions of the token.</param>
+    public record FindTokenInfoResponse(DateTime? ExpiresAt, bool IsActive, AuthTokenPermissions Permissions);
 
 }

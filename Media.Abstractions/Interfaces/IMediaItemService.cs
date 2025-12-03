@@ -14,7 +14,8 @@ namespace Media.Abstractions.Interfaces
         /// Upload a media item and store it locally.
         /// </summary>
         /// <param name="mediaItemReq">Uploading info.</param>
+        /// <param name="token">Token to proof you have writing rights.</param>
         /// <returns>Created media item object.</returns>
-        Task<UploadMediaItemResponse> UploadMediaItem(UploadMediaItemRequest mediaItemReq);
+        Task<UploadMediaItemResponse> UploadMediaItem(UploadMediaItemRequest mediaItemReq, string token);
     }
 }

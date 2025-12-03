@@ -11,15 +11,10 @@ namespace Media.Core.Dtos
     /// <summary>
     /// Input for uploading a media item.
     /// </summary>
-    /// <param name="CreatedByToken">Token to identity owner of media file.</param>
     /// <param name="Title">Optional title of the media file.</param>
     /// <param name="Description">Optional description of the media file.</param>
     /// <param name="FormFile">The actual media file.</param>
-    public record UploadMediaItemRequest(
-        string CreatedByToken, 
-        string? Title, 
-        string? Description, 
-        IFormFile FormFile);
+    public record UploadMediaItemRequest(string? Title, string? Description, IFormFile FormFile);
 
     /// <summary>
     /// Output for uploading a media item.

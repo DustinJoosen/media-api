@@ -1,5 +1,6 @@
 ﻿using Media.Abstractions.Interfaces;
 using Media.Core.Dtos;
+using Media.Core.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +22,13 @@ namespace Media.Presentation.Controllers
         /// <returns>Id of the created media item.</returns>
         [HttpPost]
         [Route("upload")]
-        public async Task<UploadMediaItemResponse> UploadMediaItem([FromForm] UploadMediaItemRequest mediaItemReq) =>
-            await this._mediaItemService.UploadMediaItem(mediaItemReq);
+        public async Task<UploadMediaItemResponse> UploadMediaItem([FromForm] UploadMediaItemRequest mediaItemReq)
+        {
+            var token = this.Request.Headers.Authorization.ToString();
+            if (string.IsNullOrEmpty(token))
+                throw new UnauthorizedException("Didn't provide an authorization token in header.");
+
+            return await this._mediaItemService.UploadMediaItem(mediaItemReq, token);
+        }
     }
 }

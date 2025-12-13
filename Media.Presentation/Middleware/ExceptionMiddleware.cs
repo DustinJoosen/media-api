@@ -1,13 +1,6 @@
 ﻿using Media.Core.Exceptions;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Media.Presentation
+namespace Media.Presentation.Middleware
 {
     /// <summary>
     /// Middleware that catches all thrown exceptions, and adjusts the API response.

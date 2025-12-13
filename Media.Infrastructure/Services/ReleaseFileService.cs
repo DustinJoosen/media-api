@@ -2,10 +2,8 @@
 using Media.Core.Dtos;
 using Media.Core.Exceptions;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 
-
-namespace Media.Infrastructure.Interfaces
+namespace Media.Infrastructure.Services
 {
     public class ReleaseFileService : IFileService
     {
@@ -31,7 +29,7 @@ namespace Media.Infrastructure.Interfaces
                 using var stream = new FileStream(filePath, FileMode.Create);
                 await formFile.CopyToAsync(stream);
             }
-            catch (UnauthorizedAccessException ex)
+            catch
             {
                 throw new BadRequestException($"Access to the file path is denied");
             }

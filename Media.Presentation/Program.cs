@@ -1,7 +1,7 @@
 using Media.Persistence;
 using Media.Infrastructure;
 using Media.Presentation.SwaggerGen;
-using Media.Presentation;
+using Media.Presentation.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -4,12 +4,7 @@ using Media.Core.Entities;
 using Media.Core.Exceptions;
 using Media.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Media.Infrastructure.Services
 {

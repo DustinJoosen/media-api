@@ -3,12 +3,6 @@ using Media.Core.Dtos;
 using Media.Core.Entities;
 using Media.Core.Exceptions;
 using Media.Persistence;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Media.Infrastructure.Services
 {

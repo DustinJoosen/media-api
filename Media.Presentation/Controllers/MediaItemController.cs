@@ -1,13 +1,13 @@
 ﻿using Media.Abstractions.Interfaces;
 using Media.Core.Dtos;
-using Media.Core.Exceptions;
 using Media.Presentation.Attributes;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Reflection.PortableExecutable;
 
 namespace Media.Presentation.Controllers
 {
+    /// <summary>
+    /// Endpoints about the media items themselves.
+    /// </summary>
     [Route("media")]
     [ApiController]
     public class MediaItemController : ControllerBase

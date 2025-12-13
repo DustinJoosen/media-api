@@ -1,9 +1,6 @@
 ﻿using Media.Abstractions.Interfaces;
-using Media.Core.Entities;
 using Media.Core.Exceptions;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Text;
 
 namespace Media.Presentation.Attributes
 {
@@ -13,6 +10,10 @@ namespace Media.Presentation.Attributes
     [AttributeUsage(AttributeTargets.Method)]
     public class TokenRequiredAttribute : Attribute, IAsyncAuthorizationFilter
     {
+        /// <summary>
+        /// Checks if a token is present, active, and not yet expired.
+        /// </summary>
+        /// <param name="context">Authorization context.</param>
         public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
         {
             var token = context.HttpContext.Request.Headers.Authorization.ToString();

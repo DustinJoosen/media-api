@@ -1,12 +1,13 @@
 ﻿using Media.Abstractions.Interfaces;
 using Media.Core.Dtos;
-using Media.Core.Exceptions;
 using Media.Presentation.Attributes;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Media.Presentation.Controllers
 {
+    /// <summary>
+    /// Endpoints about the authorization keys.
+    /// </summary>
     [Route("tokens")]
     [ApiController]
     public class TokenController : ControllerBase

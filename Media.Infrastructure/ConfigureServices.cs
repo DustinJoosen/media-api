@@ -1,10 +1,7 @@
 ﻿using Media.Abstractions.Interfaces;
-using Media.Infrastructure.Interfaces;
 using Media.Infrastructure.Services;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace Media.Infrastructure
 {
@@ -18,7 +15,7 @@ namespace Media.Infrastructure
 #if DEBUG
             services.AddScoped<IFileService, DebugFileService>();
 #else
-            services.AddScoped<IUploadService, ReleaseUploadService>();
+            services.AddScoped<IFileService, ReleaseFileService>();
 #endif
 
             return services;

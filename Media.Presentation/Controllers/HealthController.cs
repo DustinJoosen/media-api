@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Media.Presentation.Controllers
 {
+    /// <summary>
+    /// Health endpoint. Easy to trigger and check if the API is up and running.
+    /// </summary>
     [Route("health")]
     [ApiController]
     public class HealthController : ControllerBase

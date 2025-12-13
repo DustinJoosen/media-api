@@ -21,5 +21,12 @@ namespace Media.Core.Dtos
     /// </summary>
     /// <param name="Result">The Id of the created media item.</param>
     public record UploadMediaItemResponse(Guid Id);
+
+    /// <summary>
+    /// Output for file retrieval. Contains metadata about the file.
+    /// </summary>
+    /// <param name="FileStream">Stream of the media.</param>
+    /// <param name="MimeType">Mimetype of the media.</param>
+    public record GetMediaItemResponse(FileStream FileStream, string MimeType);
 }
 

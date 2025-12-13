@@ -19,9 +19,9 @@ namespace Media.Abstractions.Interfaces
         /// <summary>
         /// Finds the info of an authorization token.
         /// </summary>
-        /// <param name="findTokenReq">token finding information.</param>
+        /// <param name="token">token to find information of.</param>
         /// <returns>info of the token.</returns>
-        Task<FindTokenInfoResponse> FindTokenInfo(FindTokenInfoRequest findTokenReq);
+        Task<FindTokenInfoResponse> FindTokenInfo(string token);
 
         /// <summary>
         /// Deactivates an authorization token.

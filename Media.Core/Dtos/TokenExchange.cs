@@ -20,13 +20,6 @@ namespace Media.Core.Dtos
     /// <param name="Token">Created token object.</param>
     public record CreateTokenResponse(string Token);
 
-
-    /// <summary>
-    /// Input for finding token info.
-    /// </summary>
-    /// <param name="Token">Token to find.</param>
-    public record FindTokenInfoRequest(string Token);
-
     /// <summary>
     /// Output for finding token info.
     /// </summary>

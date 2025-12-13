@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Media.Infrastructure.Services
 {
-    public class DebugUploadService : ReleaseUploadService, IUploadService
+    public class DebugFileService : ReleaseFileService, IFileService
     {
 
         /// <summary>

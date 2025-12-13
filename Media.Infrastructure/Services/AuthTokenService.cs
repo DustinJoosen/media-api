@@ -49,13 +49,13 @@ namespace Media.Infrastructure.Services
         /// <summary>
         /// Finds the info of an authorization token.
         /// </summary>
-        /// <param name="findTokenReq">token finding information.</param>
+        /// <param name="token">token to find information of.</param>
         /// <returns>info of the token.</returns>
-        public async virtual Task<FindTokenInfoResponse> FindTokenInfo(FindTokenInfoRequest findTokenReq)
+        public async virtual Task<FindTokenInfoResponse> FindTokenInfo(string token)
         {
-            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == findTokenReq.Token);
+            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token);
             if (authToken == null)
-                throw new NotFoundException($"Token '{findTokenReq.Token}' does not exist");
+                throw new NotFoundException($"Token '{token}' does not exist");
 
             return new(authToken.ExpiresAt, authToken.IsActive, authToken.Permissions);
         }

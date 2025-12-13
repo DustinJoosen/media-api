@@ -16,7 +16,7 @@ namespace Media.Infrastructure
             services.AddScoped<IMediaItemService, MediaItemService>();
 
 #if DEBUG
-            services.AddScoped<IUploadService, DebugUploadService>();
+            services.AddScoped<IFileService, DebugFileService>();
 #else
             services.AddScoped<IUploadService, ReleaseUploadService>();
 #endif

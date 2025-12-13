@@ -15,9 +15,9 @@ namespace Media.Infrastructure.Services
     public class MediaItemService : IMediaItemService
     {
         private readonly IAuthTokenService _tokenService;
-        private readonly IUploadService _uploadService;
+        private readonly IFileService _uploadService;
         private readonly MediaDbContext _context;
-        public MediaItemService(IAuthTokenService tokenService, MediaDbContext context, IUploadService uploadService)
+        public MediaItemService(IAuthTokenService tokenService, MediaDbContext context, IFileService uploadService)
         {
             this._tokenService = tokenService;
             this._uploadService = uploadService;
@@ -32,13 +32,7 @@ namespace Media.Infrastructure.Services
         /// <returns>Created media item object.</returns>
         public async virtual Task<UploadMediaItemResponse> UploadMediaItem(UploadMediaItemRequest mediaItemReq, string token)
         {
-            var tokenInfo = await this._tokenService.FindTokenInfo(new FindTokenInfoRequest(token));
-            if (!tokenInfo.IsActive)
-                throw new UnauthorizedException("Could not upload this media item. Provided token is deactivated.");
-
-            if (tokenInfo.ExpiresAt < DateTime.Now)
-                throw new UnauthorizedException("Could not upload this media item. Provided token is expired.");
-
+            var tokenInfo = await this._tokenService.FindTokenInfo(token);
             if (!tokenInfo.Permissions.HasFlag(AuthTokenPermissions.CanCreate))
                 throw new UnauthorizedException("Could not upload this media item. Provided token does not have the CanCreate permission.");
 
@@ -57,5 +51,14 @@ namespace Media.Infrastructure.Services
 
             return new(mediaItem.Id);
         }
+
+        /// <summary>
+        /// Gets the filestream.
+        /// </summary>
+        /// <param name="id">Id of the specified media item.</param>
+        /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
+        public GetMediaItemResponse GetMediaItemFile(Guid id) =>
+            this._uploadService.GetFile(id);
+
     }
 }

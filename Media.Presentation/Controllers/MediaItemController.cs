@@ -1,8 +1,10 @@
 ﻿using Media.Abstractions.Interfaces;
 using Media.Core.Dtos;
 using Media.Core.Exceptions;
+using Media.Presentation.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.PortableExecutable;
 
 namespace Media.Presentation.Controllers
 {
@@ -17,17 +19,29 @@ namespace Media.Presentation.Controllers
         }
 
         /// <summary>
+        /// Gets a filestream of the media item.
+        /// </summary>
+        /// <param name="id">Id of the media item.</param>
+        /// <returns>Open filestream.</returns>
+        [HttpGet]
+        [Route("{id}/file")]
+        [ProducesResponseType(typeof(FileStream), StatusCodes.Status200OK)]
+        public FileStreamResult GetFileStream([FromRoute] Guid id)
+        {
+            var mediaFile = this._mediaItemService.GetMediaItemFile(id);
+            return this.File(mediaFile.FileStream, mediaFile.MimeType);
+        }
+
+        /// <summary>
         /// Uploads a media item to the file storage.
         /// </summary>
         /// <returns>Id of the created media item.</returns>
         [HttpPost]
         [Route("upload")]
+        [TokenRequired]
         public async Task<UploadMediaItemResponse> UploadMediaItem([FromForm] UploadMediaItemRequest mediaItemReq)
         {
-            var token = this.Request.Headers.Authorization.ToString();
-            if (string.IsNullOrEmpty(token))
-                throw new UnauthorizedException("Didn't provide an authorization token in header.");
-
+            string token = this.Request.Headers.Authorization.ToString();
             return await this._mediaItemService.UploadMediaItem(mediaItemReq, token);
         }
     }

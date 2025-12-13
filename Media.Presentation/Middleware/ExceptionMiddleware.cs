@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Media.Infrastructure
+namespace Media.Presentation
 {
     /// <summary>
     /// Middleware that catches all thrown exceptions, and adjusts the API response.

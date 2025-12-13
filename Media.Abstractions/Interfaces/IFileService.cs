@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Media.Core.Dtos;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,8 +8,15 @@ using System.Threading.Tasks;
 
 namespace Media.Abstractions.Interfaces
 {
-    public interface IUploadService
+    public interface IFileService
     {
+        /// <summary>
+        /// Gets the filestream.
+        /// </summary>
+        /// <param name="id">Id of the specified media item.</param>
+        /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
+        GetMediaItemResponse GetFile(Guid id);
+
         /// <summary>
         /// Uploads a formfile to the file storage.
         /// </summary>

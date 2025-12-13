@@ -1,5 +1,7 @@
 ﻿using Media.Abstractions.Interfaces;
 using Media.Core.Dtos;
+using Media.Core.Exceptions;
+using Media.Presentation.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,17 +32,24 @@ namespace Media.Presentation.Controllers
         /// <returns>The expiration date + whether the token is active.</returns>
         [HttpGet]
         [Route("info")]
-        public async Task<FindTokenInfoResponse> FindTokenInfo([FromQuery] FindTokenInfoRequest findTokenReq) =>
-            await this._tokenService.FindTokenInfo(findTokenReq);
+        [TokenRequired]
+        public async Task<FindTokenInfoResponse> FindTokenInfo()
+        {
+            string token = this.Request.Headers.Authorization.ToString();
+            return await this._tokenService.FindTokenInfo(token);
+        }
 
         /// <summary>
         /// Deactivate an authorization token. It will remain in the database, but it can't be used any longer.
         /// </summary>
         [HttpDelete]
         [Route("deactivate-token")]
-        public async Task<OkObjectResult> DeactivateToken(string token)
+
+        public async Task<OkObjectResult> DeactivateToken()
         {
+            string token = this.Request.Headers.Authorization.ToString();
             await this._tokenService.DeactivateToken(token);
+
             return this.Ok($"Token '{token}' successfully deactivated.");
         }
     }

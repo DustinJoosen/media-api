@@ -17,5 +17,12 @@ namespace Media.Abstractions.Interfaces
         /// <param name="token">Token to proof you have writing rights.</param>
         /// <returns>Created media item object.</returns>
         Task<UploadMediaItemResponse> UploadMediaItem(UploadMediaItemRequest mediaItemReq, string token);
+
+        /// <summary>
+        /// Gets the filestream.
+        /// </summary>
+        /// <param name="id">Id of the specified media item.</param>
+        /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
+        GetMediaItemResponse GetMediaItemFile(Guid id);
     }
 }

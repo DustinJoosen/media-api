@@ -38,7 +38,7 @@ namespace Media.Presentation.Controllers
         /// <returns>Id of the created media item.</returns>
         [HttpPost]
         [Route("upload")]
-        [TokenRequired]
+        [TokenValid]
         public async Task<UploadMediaItemResponse> UploadMediaItem([FromForm] UploadMediaItemRequest mediaItemReq)
         {
             string token = this.Request.Headers.Authorization.ToString();

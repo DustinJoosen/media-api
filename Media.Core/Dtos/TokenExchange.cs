@@ -18,9 +18,13 @@ namespace Media.Core.Dtos
     /// <summary>
     /// Output for finding token info.
     /// </summary>
+    /// <param name="Name">Name of the token.</param>
     /// <param name="ExpiresAt">Expiration date.</param>
     /// <param name="IsActive">If the token is active.</param>
     /// <param name="Permissions">Permissions of the token.</param>
-    public record FindTokenInfoResponse(DateTime? ExpiresAt, bool IsActive, AuthTokenPermissions Permissions);
-
+    public record FindTokenInfoResponse(
+        string Name, 
+        DateTime? ExpiresAt, 
+        bool IsActive, 
+        AuthTokenPermissions Permissions);
 }

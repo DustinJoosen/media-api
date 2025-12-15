@@ -33,7 +33,7 @@ namespace Media.Infrastructure.Services
                 Token = token,
                 Name = tokenReq.Name,
                 ExpiresAt = tokenReq.ExpiresAt,
-                Permissions = AuthTokenPermissions.CanCreate,
+                Permissions = AuthTokenPermissions.CanCreate | AuthTokenPermissions.CanDelete,
                 IsActive = true
             });
 
@@ -52,7 +52,7 @@ namespace Media.Infrastructure.Services
             if (authToken == null)
                 throw new NotFoundException($"Token '{token}' does not exist");
 
-            return new(authToken.ExpiresAt, authToken.IsActive, authToken.Permissions);
+            return new(authToken.Name, authToken.ExpiresAt, authToken.IsActive, authToken.Permissions);
         }
 
         /// <summary>

@@ -44,5 +44,20 @@ namespace Media.Presentation.Controllers
             string token = this.Request.Headers.Authorization.ToString();
             return await this._mediaItemService.UploadMediaItem(mediaItemReq, token);
         }
+
+
+        /// <summary>
+        /// Gets all media items created by the given token.
+        /// </summary>
+        /// <returns>List of all media items.</returns>
+        [HttpGet]
+        [Route("items-by-tokens")]
+        [TokenValid]
+        public async Task<GetMediaItemsByTokenResponse> GetItemsByToken()
+        {
+            string token = this.Request.Headers.Authorization.ToString();
+            return await this._mediaItemService.ByToken(token);
+        }
+
     }
 }

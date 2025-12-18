@@ -18,5 +18,12 @@ namespace Media.Abstractions.Interfaces
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
         GetMediaItemResponse GetMediaItemFile(Guid id);
+        
+        /// <summary>
+        /// Gets all media items created by the given token.
+        /// </summary>
+        /// <param name="token">Token to look for.</param>
+        /// <returns>List of all media items.</returns>
+        Task<GetMediaItemsByTokenResponse> ByToken(string token);
     }
 }

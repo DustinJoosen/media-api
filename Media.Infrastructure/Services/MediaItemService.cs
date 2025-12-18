@@ -3,6 +3,7 @@ using Media.Core.Dtos;
 using Media.Core.Entities;
 using Media.Core.Exceptions;
 using Media.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Media.Infrastructure.Services
 {
@@ -54,5 +55,24 @@ namespace Media.Infrastructure.Services
         public GetMediaItemResponse GetMediaItemFile(Guid id) =>
             this._uploadService.GetFile(id);
 
+        /// <summary>
+        /// Gets all media items created by the given token.
+        /// </summary>
+        /// <param name="token">Token to look for.</param>
+        /// <returns>List of all media items.</returns>
+        public async Task<GetMediaItemsByTokenResponse> ByToken(string token)
+        {
+            var items = await this._context.MediaItems
+                .Where(mediaItem => mediaItem.CreatedByToken == token)
+                .ToListAsync();
+
+            return new GetMediaItemsByTokenResponse(items.Select(mediaItem => new MinimumMediaItemDto
+            {
+                Id = mediaItem.Id,
+                Title = mediaItem.Title,
+                CreatedOn = mediaItem.CreatedOn,
+                UpdatedOn = mediaItem.UpdatedOn
+            }).ToList());
+        }
     }
 }

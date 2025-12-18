@@ -22,5 +22,11 @@ namespace Media.Core.Dtos
     /// <param name="FileStream">Stream of the media.</param>
     /// <param name="MimeType">Mimetype of the media.</param>
     public record GetMediaItemResponse(FileStream FileStream, string MimeType);
+
+    /// <summary>
+    /// Output for media retrieval. Contains all files created by a token.
+    /// </summary>
+    /// <param name="Items">List of all items.</param>
+    public record GetMediaItemsByTokenResponse(List<MinimumMediaItemDto> Items);
 }
 

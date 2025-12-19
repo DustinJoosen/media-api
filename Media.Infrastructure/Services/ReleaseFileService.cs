@@ -36,27 +36,62 @@ namespace Media.Infrastructure.Services
         }
 
         /// <summary>
-        /// Gets the filestream.
+        /// Gets the filestream. If it can't be previewed it returns notfound.png
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
-        public GetMediaItemResponse GetFile(Guid id)
+        public GetMediaItemPreviewResponse GetFileStreamPreview(Guid id)
         {
             var rootFolder = this.GetFileFolder();
+            var filePath = Path.Combine(rootFolder, "notfound.png");
 
             try
             {
                 var folder = Path.Combine(rootFolder, id.ToString());
                 var folderFiles = Directory.GetFiles(folder);
-                var filePath = folderFiles.First();
+                filePath = folderFiles.First();
 
-                return new(File.OpenRead(filePath), this.GetMimeType(filePath));
+                // Prevent path traversal security attacks.
+                if (!filePath.StartsWith(rootFolder, StringComparison.OrdinalIgnoreCase))
+                    throw new UnauthorizedAccessException("Access to the specified file is not allowed.");
+
+                if (!this.CanPreview(filePath))
+                    filePath = Path.Combine(rootFolder, "notfound.png");
             }
             catch
             {
-                var filePath = Path.Combine(rootFolder, "notfound.png");
-                return new(File.OpenRead(filePath), "image/png");
+                filePath = Path.Combine(rootFolder, "notfound.png");
             }
+
+            return new(File.OpenRead(filePath));
+        }
+
+
+        /// <summary>
+        /// Gets the filestream. If it can't be previewed it returns notfound.png
+        /// </summary>
+        /// <param name="id">Id of the specified media item.</param>
+        /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
+        public GetMediaItemDownloadResponse GetFileStreamDownload(Guid id)
+        {
+            var rootFolder = this.GetFileFolder();
+            var filePath = Path.Combine(rootFolder, "notfound.png");
+
+            try
+            {
+                var folder = Path.Combine(rootFolder, id.ToString());
+                var folderFiles = Directory.GetFiles(folder);
+                filePath = folderFiles.First();
+            }
+            catch
+            {
+                filePath = Path.Combine(rootFolder, "notfound.png");
+            }
+
+            var fileName = Path.GetFileName(filePath);
+            var mimeType = this.GetMimeType(filePath);
+
+            return new GetMediaItemDownloadResponse(File.OpenRead(filePath), fileName, mimeType);
         }
 
 
@@ -89,6 +124,18 @@ namespace Media.Infrastructure.Services
                 ".json" => "application/json",
                 _ => "application/octet-stream",
             };
+        }
+
+        /// <summary>
+        /// Checks if a file can be previewed.
+        /// </summary>
+        /// <param name="filePath">Filepath to check the preview ability of.</param>
+        /// <returns>Whether a file can be previewed.</returns>
+        private bool CanPreview(string filePath)
+        {
+            var extension = Path.GetExtension(filePath).ToLower();
+            var previewAllowedOptions = new List<string>([".jpg", ".jpeg", ".png"]);
+            return previewAllowedOptions.Contains(extension);
         }
     }
 }

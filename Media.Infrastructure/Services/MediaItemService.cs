@@ -10,12 +10,12 @@ namespace Media.Infrastructure.Services
     public class MediaItemService : IMediaItemService
     {
         private readonly IAuthTokenService _tokenService;
-        private readonly IFileService _uploadService;
+        private readonly IFileService _fileService;
         private readonly MediaDbContext _context;
-        public MediaItemService(IAuthTokenService tokenService, MediaDbContext context, IFileService uploadService)
+        public MediaItemService(IAuthTokenService tokenService, MediaDbContext context, IFileService fileService)
         {
             this._tokenService = tokenService;
-            this._uploadService = uploadService;
+            this._fileService = fileService;
             this._context = context;
         }
 
@@ -39,7 +39,7 @@ namespace Media.Infrastructure.Services
                 Description = mediaItemReq.Description
             };
 
-            await this._uploadService.UploadFile(mediaItem.Id, mediaItemReq.FormFile);
+            await this._fileService.UploadFile(mediaItem.Id, mediaItemReq.FormFile);
 
             this._context.MediaItems.Add(mediaItem);
             await this._context.SaveChangesAsync();
@@ -48,12 +48,22 @@ namespace Media.Infrastructure.Services
         }
 
         /// <summary>
-        /// Gets the filestream.
+        /// Gets the filestream. If it can't be previewed it will return notfound.png
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
-        public GetMediaItemResponse GetMediaItemFile(Guid id) =>
-            this._uploadService.GetFile(id);
+        public GetMediaItemPreviewResponse GetMediaItemFileStreamPreview(Guid id) =>
+            this._fileService.GetFileStreamPreview(id);
+
+
+        /// <summary>
+        /// Gets the download filestream. If it can't be previewed it will return notfound.png
+        /// </summary>
+        /// <param name="id">Id of the specified media item.</param>
+        /// <returns>Download information about the file.</returns>
+        public GetMediaItemDownloadResponse GetMediaItemFileStreamDownload(Guid id) =>
+            this._fileService.GetFileStreamDownload(id);
+
 
         /// <summary>
         /// Gets all media items created by the given token.

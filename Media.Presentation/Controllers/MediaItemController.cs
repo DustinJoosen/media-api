@@ -19,16 +19,30 @@ namespace Media.Presentation.Controllers
         }
 
         /// <summary>
-        /// Gets a filestream of the media item.
+        /// Gets a preview filestream of the media item.
         /// </summary>
         /// <param name="id">Id of the media item.</param>
         /// <returns>Open filestream.</returns>
         [HttpGet]
-        [Route("{id}/file")]
+        [Route("{id}/preview")]
         [ProducesResponseType(typeof(FileStream), StatusCodes.Status200OK)]
-        public FileStreamResult GetFileStream([FromRoute] Guid id)
+        public FileStream GetFileStreamPreview([FromRoute] Guid id)
         {
-            var mediaFile = this._mediaItemService.GetMediaItemFile(id);
+            var mediaFile = this._mediaItemService.GetMediaItemFileStreamPreview(id);
+            return mediaFile.FileStream;
+        }
+
+        /// <summary>
+        /// Gets a download stream of the media item.
+        /// </summary>
+        /// <param name="id">Id of the media item.</param>
+        /// <returns>Download filestream.</returns>
+        [HttpGet]
+        [Route("{id}/download")]
+        public FileStreamResult GetFileStreamDownload([FromRoute] Guid id)
+        {
+            var mediaFile = this._mediaItemService.GetMediaItemFileStreamDownload(id);
+            this.Response.Headers.Append("Content-Disposition", $"attachment; filename={mediaFile.FileName}");
             return this.File(mediaFile.FileStream, mediaFile.MimeType);
         }
 
@@ -44,7 +58,6 @@ namespace Media.Presentation.Controllers
             string token = this.Request.Headers.Authorization.ToString();
             return await this._mediaItemService.UploadMediaItem(mediaItemReq, token);
         }
-
 
         /// <summary>
         /// Gets all media items created by the given token.

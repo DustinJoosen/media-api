@@ -20,8 +20,15 @@ namespace Media.Core.Dtos
     /// Output for file retrieval. Contains metadata about the file.
     /// </summary>
     /// <param name="FileStream">Stream of the media.</param>
-    /// <param name="MimeType">Mimetype of the media.</param>
-    public record GetMediaItemResponse(FileStream FileStream, string MimeType);
+    public record GetMediaItemPreviewResponse(FileStream FileStream);
+    
+    /// <summary>
+    /// Output for file retrieval. Contains metadata about the file.
+    /// </summary>
+    /// <param name="FileStream">Stream of the media.</param>
+    /// <param name="FileName">File name of the media.</param>
+    /// <param name="MimeType">MimeType of the media.</param>
+    public record GetMediaItemDownloadResponse(FileStream FileStream, string FileName, string MimeType);
 
     /// <summary>
     /// Output for media retrieval. Contains all files created by a token.

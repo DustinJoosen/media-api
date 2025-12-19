@@ -6,11 +6,18 @@ namespace Media.Abstractions.Interfaces
     public interface IFileService
     {
         /// <summary>
-        /// Gets the filestream.
+        /// Gets the filestream. If it can't be previewed it returns notfound.png
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
-        GetMediaItemResponse GetFile(Guid id);
+        GetMediaItemPreviewResponse GetFileStreamPreview(Guid id);
+
+        /// <summary>
+        /// Gets the downloadable filestream. If it can't be previewed it returns notfound.png
+        /// </summary>
+        /// <param name="id">Id of the specified media item.</param>
+        /// <returns>Download information about the file.</returns>
+        GetMediaItemDownloadResponse GetFileStreamDownload(Guid id);
 
         /// <summary>
         /// Uploads a formfile to the file storage.

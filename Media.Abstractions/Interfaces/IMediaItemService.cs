@@ -13,11 +13,18 @@ namespace Media.Abstractions.Interfaces
         Task<UploadMediaItemResponse> UploadMediaItem(UploadMediaItemRequest mediaItemReq, string token);
 
         /// <summary>
-        /// Gets the filestream.
+        /// Gets the filestream. If it can't be previewed it will return notfound.png
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
-        GetMediaItemResponse GetMediaItemFile(Guid id);
+        GetMediaItemPreviewResponse GetMediaItemFileStreamPreview(Guid id);
+        
+        /// <summary>
+        /// Gets the download filestream. If it can't be previewed it will return notfound.png
+        /// </summary>
+        /// <param name="id">Id of the specified media item.</param>
+        /// <returns>Download information about the file.</returns>
+        GetMediaItemDownloadResponse GetMediaItemFileStreamDownload(Guid id);
         
         /// <summary>
         /// Gets all media items created by the given token.

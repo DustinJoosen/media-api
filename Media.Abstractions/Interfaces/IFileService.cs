@@ -25,5 +25,11 @@ namespace Media.Abstractions.Interfaces
         /// <param name="id">Id to save the file as.</param>
         /// <param name="formFile">File to upload.</param>
         Task UploadFile(Guid id, IFormFile formFile);
+        
+        /// <summary>
+        /// Recursively deletes the folder of the given item.
+        /// </summary>
+        /// <param name="id">Id of the folder to delete</param>
+        void DeleteFolder(Guid id);
     }
 }

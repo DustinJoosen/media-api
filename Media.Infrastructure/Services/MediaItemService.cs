@@ -84,5 +84,33 @@ namespace Media.Infrastructure.Services
                 UpdatedOn = mediaItem.UpdatedOn
             }).ToList());
         }
+
+        /// <summary>
+        /// Deletes the MediaItem data record and the folder/contents from the id.
+        /// </summary>
+        /// <param name="id">Id of the MediaItem to delete.</param>
+        /// <param name="token">Token to proof you have the correct deletion rights.</param>
+        public async Task DeleteById(Guid id, string token)
+        {
+            // Validation.
+            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id);
+            if (item == null)
+                throw new NotFoundException("Media Item is not found");
+
+            var tokenInfo = await this._tokenService.FindTokenInfo(token);
+            if (!tokenInfo.Permissions.HasFlag(AuthTokenPermissions.CanDelete))
+                throw new UnauthorizedException("Could not delete this media item. Provided token does not have the CanDelete permission.");
+
+            if (item.CreatedByToken != token)
+                throw new UnauthorizedException("Could not delete this media item. Provided token does not own media item.");
+
+            // Deletion of data record.
+            this._context.MediaItems.Remove(item);
+            await this._context.SaveChangesAsync();
+
+            // Deletion of folder.
+            this._fileService.DeleteFolder(id);
+        }
+
     }
 }

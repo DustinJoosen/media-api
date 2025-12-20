@@ -72,5 +72,17 @@ namespace Media.Presentation.Controllers
             return await this._mediaItemService.ByToken(token);
         }
 
+        /// <summary>
+        /// Deletes the MediaItem data record and the folder/contents from the id.
+        /// </summary>
+        [HttpDelete]
+        [Route("{id}/delete")]
+        [TokenValid]
+        public async Task<IActionResult> DeleteMediaItem([FromRoute] Guid id)
+        {
+            string token = this.Request.Headers.Authorization.ToString();
+            await this._mediaItemService.DeleteById(id, token);
+            return Ok();
+        }
     }
 }

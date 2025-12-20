@@ -43,29 +43,17 @@ namespace Media.Infrastructure.Services
         public GetMediaItemPreviewResponse GetFileStreamPreview(Guid id)
         {
             var rootFolder = this.GetFileFolder();
-            var filePath = Path.Combine(rootFolder, "notfound.png");
+            var filePath = this.GetFirstFileFromId(id);
 
-            try
-            {
-                var folder = Path.Combine(rootFolder, id.ToString());
-                var folderFiles = Directory.GetFiles(folder);
-                filePath = folderFiles.First();
+            // Prevent path traversal security attacks.
+            if (!filePath.StartsWith(rootFolder, StringComparison.OrdinalIgnoreCase))
+                throw new UnauthorizedAccessException("Access to the specified file is not allowed.");
 
-                // Prevent path traversal security attacks.
-                if (!filePath.StartsWith(rootFolder, StringComparison.OrdinalIgnoreCase))
-                    throw new UnauthorizedAccessException("Access to the specified file is not allowed.");
-
-                if (!this.CanPreview(filePath))
-                    filePath = Path.Combine(rootFolder, "notfound.png");
-            }
-            catch
-            {
+            if (!this.CanPreview(filePath))
                 filePath = Path.Combine(rootFolder, "notfound.png");
-            }
 
             return new(File.OpenRead(filePath));
         }
-
 
         /// <summary>
         /// Gets the filestream. If it can't be previewed it returns notfound.png
@@ -74,26 +62,47 @@ namespace Media.Infrastructure.Services
         /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
         public GetMediaItemDownloadResponse GetFileStreamDownload(Guid id)
         {
-            var rootFolder = this.GetFileFolder();
-            var filePath = Path.Combine(rootFolder, "notfound.png");
-
-            try
-            {
-                var folder = Path.Combine(rootFolder, id.ToString());
-                var folderFiles = Directory.GetFiles(folder);
-                filePath = folderFiles.First();
-            }
-            catch
-            {
-                filePath = Path.Combine(rootFolder, "notfound.png");
-            }
-
+            var filePath = this.GetFirstFileFromId(id);
             var fileName = Path.GetFileName(filePath);
             var mimeType = this.GetMimeType(filePath);
 
             return new GetMediaItemDownloadResponse(File.OpenRead(filePath), fileName, mimeType);
         }
 
+        /// <summary>
+        /// Recursively deletes the folder of the given item.
+        /// </summary>
+        /// <param name="id">Id of the folder to delete</param>
+        public void DeleteFolder(Guid id)
+        {
+            var folderPath = Path.Combine(this.GetFileFolder(), id.ToString());
+
+            if (!Directory.Exists(folderPath))
+                throw new BadRequestException("File could not be deleted, it does not exist");
+
+            Directory.Delete(folderPath, recursive: true);
+        }
+
+        /// <summary>
+        /// Gets the first (hopefully only) file in the folder.
+        /// </summary>
+        /// <param name="id">Id of the folder to delete</param>
+        /// <returns>Full filepath of the first file.</returns>
+        protected virtual string GetFirstFileFromId(Guid id)
+        {
+            var rootFolder = this.GetFileFolder();
+
+            try
+            {
+                var folder = Path.Combine(rootFolder, id.ToString());
+                var folderFiles = Directory.GetFiles(folder);
+                return folderFiles.First();
+            }
+            catch
+            {
+                return Path.Combine(rootFolder, "notfound.png");
+            }
+        }
 
         /// <summary>
         /// Returns the Linux folder where the files are saved.

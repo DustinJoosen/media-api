@@ -32,5 +32,12 @@ namespace Media.Abstractions.Interfaces
         /// <param name="token">Token to look for.</param>
         /// <returns>List of all media items.</returns>
         Task<GetMediaItemsByTokenResponse> ByToken(string token);
+
+        /// <summary>
+        /// Deletes the MediaItem data record and the folder/contents from the id.
+        /// </summary>
+        /// <param name="id">Id of the MediaItem to delete.</param>
+        /// <param name="token">Token to proof you have the correct deletion rights.</param>
+        Task DeleteById(Guid id, string token);
     }
 }

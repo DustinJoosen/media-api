@@ -42,8 +42,8 @@ jobs:
       - name: Deploy and restart service
         run: |
           ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
-            rm -r /home/syter/Services/media &&
-            mkdir -p /home/syter/Services/media &&
-            tar xzf /tmp/media-artifact.tar.gz -C /home/syter/Services/media &&
-            sudo systemctl restart media.service
+            rm -r /home/syter/Services/media/media-api &&
+            mkdir -p /home/syter/Services/media/media-api &&
+            tar xzf /tmp/media-artifact.tar.gz -C /home/syter/Services/media/media-api &&
+            sudo systemctl restart media-api.service
           "

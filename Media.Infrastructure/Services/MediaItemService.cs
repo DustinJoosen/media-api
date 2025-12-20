@@ -52,8 +52,14 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
-        public GetMediaItemPreviewResponse GetMediaItemFileStreamPreview(Guid id) =>
-            this._fileService.GetFileStreamPreview(id);
+        public async Task<GetMediaItemPreviewResponse> GetMediaItemFileStreamPreview(Guid id)
+        {
+            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id);
+            if (item == null)
+                throw new NotFoundException("Media Item is not found");
+
+            return this._fileService.GetFileStreamPreview(id);
+        }
 
 
         /// <summary>
@@ -61,8 +67,14 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Download information about the file.</returns>
-        public GetMediaItemDownloadResponse GetMediaItemFileStreamDownload(Guid id) =>
-            this._fileService.GetFileStreamDownload(id);
+        public async Task<GetMediaItemDownloadResponse> GetMediaItemFileStreamDownload(Guid id)
+        {
+            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id);
+            if (item == null)
+                throw new NotFoundException("Media Item is not found");
+
+            return this._fileService.GetFileStreamDownload(id);
+        }
 
 
         /// <summary>
@@ -111,6 +123,5 @@ namespace Media.Infrastructure.Services
             // Deletion of folder.
             this._fileService.DeleteFolder(id);
         }
-
     }
 }

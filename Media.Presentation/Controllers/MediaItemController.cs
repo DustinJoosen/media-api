@@ -26,9 +26,9 @@ namespace Media.Presentation.Controllers
         [HttpGet]
         [Route("{id}/preview")]
         [ProducesResponseType(typeof(FileStream), StatusCodes.Status200OK)]
-        public FileStream GetFileStreamPreview([FromRoute] Guid id)
+        public async Task<FileStream> GetFileStreamPreview([FromRoute] Guid id)
         {
-            var mediaFile = this._mediaItemService.GetMediaItemFileStreamPreview(id);
+            var mediaFile = await this._mediaItemService.GetMediaItemFileStreamPreview(id);
             return mediaFile.FileStream;
         }
 
@@ -39,9 +39,9 @@ namespace Media.Presentation.Controllers
         /// <returns>Download filestream.</returns>
         [HttpGet]
         [Route("{id}/download")]
-        public FileStreamResult GetFileStreamDownload([FromRoute] Guid id)
+        public async Task<FileStreamResult> GetFileStreamDownload([FromRoute] Guid id)
         {
-            var mediaFile = this._mediaItemService.GetMediaItemFileStreamDownload(id);
+            var mediaFile = await this._mediaItemService.GetMediaItemFileStreamDownload(id);
             this.Response.Headers.Append("Content-Disposition", $"attachment; filename={mediaFile.FileName}");
             return this.File(mediaFile.FileStream, mediaFile.MimeType);
         }

@@ -116,12 +116,25 @@ namespace Media.Infrastructure.Services
             if (item.CreatedByToken != token)
                 throw new UnauthorizedException("Could not delete this media item. Provided token does not own media item.");
 
-            // Deletion of data record.
-            this._context.MediaItems.Remove(item);
-            await this._context.SaveChangesAsync();
+            using var transaction = await this._context.Database.BeginTransactionAsync();
 
-            // Deletion of folder.
-            this._fileService.DeleteFolder(id);
+            try
+            {
+                // Deletion of data record.
+                this._context.MediaItems.Remove(item);
+                await this._context.SaveChangesAsync();
+
+                // Deletion of folder.
+                this._fileService.DeleteFolder(id);
+
+                // Execute transaction.
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
     }
 }

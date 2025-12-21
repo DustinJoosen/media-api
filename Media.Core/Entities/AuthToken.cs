@@ -25,5 +25,6 @@ namespace Media.Core.Entities
         CanRead = 1,
         CanCreate = 2,
         CanDelete = 4,
+        CanManagePermissions = 8
     }
 }

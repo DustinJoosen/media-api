@@ -41,11 +41,24 @@ namespace Media.Presentation.Controllers
         }
 
         /// <summary>
+        /// Changes permissions of an authorization token. Note that this action requires a token with the CanManagePermissions permission.
+        /// </summary>
+        [HttpPut]
+        [Route("change-permissions")]
+        [TokenRequired]
+        public async Task<IActionResult> ChangeTokenPermission(ChangeTokenPermissionRequest changeTokenPermissionReq)
+        {
+            string token = this.Request.Headers.Authorization.ToString();
+
+            await this._tokenService.ChangePermissions(changeTokenPermissionReq, token);
+            return this.Ok($"Token '{changeTokenPermissionReq.Token}' has been given new permissions.");
+        }
+
+        /// <summary>
         /// Deactivate an authorization token. It will remain in the database, but it can't be used any longer.
         /// </summary>
         [HttpDelete]
         [Route("deactivate-token")]
-
         public async Task<OkObjectResult> DeactivateToken()
         {
             string token = this.Request.Headers.Authorization.ToString();

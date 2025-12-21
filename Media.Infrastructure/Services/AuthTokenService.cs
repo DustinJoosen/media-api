@@ -19,7 +19,7 @@ namespace Media.Infrastructure.Services
         /// <summary>
         /// Create an authorization token.
         /// </summary>
-        /// <param name="tokenReq">token creation information.</param>
+        /// <param name="tokenReq">Token creation information.</param>
         /// <returns>Created token.</returns>
         public async virtual Task<CreateTokenResponse> CreateToken(CreateTokenRequest tokenReq)
         {
@@ -44,8 +44,8 @@ namespace Media.Infrastructure.Services
         /// <summary>
         /// Finds the info of an authorization token.
         /// </summary>
-        /// <param name="token">token to find information of.</param>
-        /// <returns>info of the token.</returns>
+        /// <param name="token">Token to find information of.</param>
+        /// <returns>Info of the token.</returns>
         public async virtual Task<FindTokenInfoResponse> FindTokenInfo(string token)
         {
             var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token);
@@ -58,7 +58,7 @@ namespace Media.Infrastructure.Services
         /// <summary>
         /// Deactivates an authorization token.
         /// </summary>
-        /// <param name="token">token to deactivate.</param>
+        /// <param name="token">Token to deactivate.</param>
         /// <returns>Whether the operation succeeded.</returns>
         public async virtual Task DeactivateToken(string token)
         {
@@ -76,6 +76,51 @@ namespace Media.Infrastructure.Services
             {
                 throw new DatabaseOperationException($"Could not deactivate token");
             }
+        }
+
+        /// <summary>
+        /// Gets the permissions an auth token has.
+        /// </summary>
+        /// <param name="token">Token to find permissions from.</param>
+        /// <returns>Permissions object of the given token.</returns>
+        public async Task<AuthTokenPermissions> GetRoles(string token)
+        {
+            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token);
+            if (authToken == null)
+                throw new NotFoundException($"Token '{token}' does not exist");
+
+            return authToken.Permissions;
+        }
+
+        /// <summary>
+        /// Changes permissions of an authorization token. Note that this action requires a token with the CanManagePermissions permission.
+        /// </summary>
+        /// <param name="changeTokenPermissionReq">The token to change, and the new permissions.</param>
+        /// <param name="token">Token to proof the user is allowed to change permissions. NOT THE TOKEN THAT WILL BE CHANGED.</param>
+        public async Task ChangePermissions(ChangeTokenPermissionRequest changeTokenPermissionReq, string token)
+        {
+            // Check that you're allowed to change the permissions.
+            var roles = await this.GetRoles(token);
+            if (!roles.HasFlag(AuthTokenPermissions.CanManagePermissions))
+                throw new UnauthorizedException("Provided token does not have the needed permissions.");
+
+            // Find and check the existence of the token.
+            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == changeTokenPermissionReq.Token);
+            if (authToken == null)
+                throw new NotFoundException($"Token '{changeTokenPermissionReq.Token}' does not exist");
+
+            // Update the new permission.
+            try
+            {
+                authToken.Permissions = changeTokenPermissionReq.Permission;
+                this._context.AuthTokens.Update(authToken);
+                await this._context.SaveChangesAsync();
+            }
+            catch
+            {
+                throw new DatabaseOperationException($"Could not update token permissions");
+            }
+
         }
 
         /// <summary>

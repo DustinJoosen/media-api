@@ -27,4 +27,11 @@ namespace Media.Core.Dtos
         DateTime? ExpiresAt, 
         bool IsActive, 
         AuthTokenPermissions Permissions);
+
+    /// <summary>
+    /// Input for changing token permissions.
+    /// </summary>
+    /// <param name="Token">Token to change the permissions of.</param>
+    /// <param name="Permission">New permissions.</param>
+    public record ChangeTokenPermissionRequest(string Token, AuthTokenPermissions Permission);
 }

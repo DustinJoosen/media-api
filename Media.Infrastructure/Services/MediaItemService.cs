@@ -91,7 +91,6 @@ namespace Media.Infrastructure.Services
             return new GetMediaItemInfoResponse(item.CreatedByToken, item.Title, item.Description);
         }
 
-
         /// <summary>
         /// Gets all media items created by the given token.
         /// </summary>

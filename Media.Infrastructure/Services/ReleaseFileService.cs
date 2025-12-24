@@ -16,13 +16,9 @@ namespace Media.Infrastructure.Services
             if (formFile == null || formFile.Length == 0)
                 throw new BadRequestException("Uploaded file is null or has a length of 0");
 
-            var uploadsFolder = this.GetFileFolder();
 
-            var folder = Path.Combine(uploadsFolder, id.ToString());
-            var filePath = Path.Combine(folder, Path.GetFileName(formFile.FileName));
-
-            if (!Directory.Exists(folder))
-                Directory.CreateDirectory(folder);
+            var guidFolder = this.GetFullGuidFolder(id);
+            var filePath = Path.Combine(guidFolder, Path.GetFileName(formFile.FileName));
 
             try
             {
@@ -75,31 +71,31 @@ namespace Media.Infrastructure.Services
         /// <param name="id">Id of the folder to delete</param>
         public void DeleteFolder(Guid id)
         {
-            var folderPath = Path.Combine(this.GetFileFolder(), id.ToString());
+            var guidFolder = this.GetFullGuidFolder(id);
 
-            if (!Directory.Exists(folderPath))
+            if (!Directory.Exists(guidFolder))
                 throw new BadRequestException("File could not be deleted, it does not exist");
 
-            Directory.Delete(folderPath, recursive: true);
+            Directory.Delete(guidFolder, recursive: true);
         }
 
         /// <summary>
         /// Gets the first (hopefully only) file in the folder.
         /// </summary>
-        /// <param name="id">Id of the folder to delete</param>
+        /// <param name="id">Id of the folder to find</param>
         /// <returns>Full filepath of the first file.</returns>
         protected virtual string GetFirstFileFromId(Guid id)
         {
-            var rootFolder = this.GetFileFolder();
+            var guidFolder = this.GetFullGuidFolder(id);
 
             try
             {
-                var folder = Path.Combine(rootFolder, id.ToString());
-                var folderFiles = Directory.GetFiles(folder);
+                var folderFiles = Directory.GetFiles(guidFolder);
                 return folderFiles.First();
             }
             catch
             {
+                var rootFolder = this.GetFileFolder();
                 return Path.Combine(rootFolder, "notfound.png");
             }
         }
@@ -110,6 +106,25 @@ namespace Media.Infrastructure.Services
         /// <returns>Filepath of the images.</returns>
         protected virtual string GetFileFolder() =>
             "/home/syter/Pictures/media";
+
+        /// <summary>
+        /// Get the full folder path of a media item based on guid with dashes as seperators.
+        /// <code>Example
+        /// 1f7179f9-d979-497b-902a-177eafbd22fc
+        /// rootFolder/1f7179f9/d979/497b/902a/177eafbd22fc.
+        /// </code>        
+        /// This method also creates the directory.
+        /// </summary>
+        /// <param name="guid">Guid to parse the folder from.</param>
+        /// <returns>The folder path.</returns>
+        private string GetFullGuidFolder(Guid guid)
+        {
+            var rootFolder = this.GetFileFolder();
+            string nestedPath = Path.Combine(rootFolder, guid.ToString().Replace("-", "/"));
+
+            Directory.CreateDirectory(nestedPath);
+            return nestedPath;
+        }
 
         /// <summary>
         /// Gets the correct mimetype of the file extension.

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Media.Core.Dtos
+namespace Media.Core.Dtos.Exchange
 {
     /// <summary>
     /// Output for a health checkup.

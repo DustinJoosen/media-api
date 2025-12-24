@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Media.Core.Dtos
+namespace Media.Core.Dtos.Exchange
 {
     /// <summary>
     /// Input for uploading a media item.
@@ -21,7 +21,7 @@ namespace Media.Core.Dtos
     /// </summary>
     /// <param name="FileStream">Stream of the media.</param>
     public record GetMediaItemPreviewResponse(FileStream FileStream);
-    
+
     /// <summary>
     /// Output for file retrieval. Contains metadata about the file.
     /// </summary>
@@ -34,6 +34,7 @@ namespace Media.Core.Dtos
     /// Output for media retrieval. Contains all files created by a token.
     /// </summary>
     /// <param name="Items">List of all items.</param>
-    public record GetMediaItemsByTokenResponse(List<MinimumMediaItemDto> Items);
+    /// <param name="Pagination">Pagination for the items.</param>
+    public record GetMediaItemsByTokenResponse(List<MinimumMediaItemDto> Items, PaginationRes Pagination);
 }
 

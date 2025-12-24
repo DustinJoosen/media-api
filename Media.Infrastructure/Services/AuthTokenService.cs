@@ -1,5 +1,5 @@
 ﻿using Media.Abstractions.Interfaces;
-using Media.Core.Dtos;
+using Media.Core.Dtos.Exchange;
 using Media.Core.Entities;
 using Media.Core.Exceptions;
 using Media.Persistence;

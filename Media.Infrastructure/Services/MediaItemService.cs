@@ -1,5 +1,6 @@
 ﻿using Media.Abstractions.Interfaces;
 using Media.Core.Dtos;
+using Media.Core.Dtos.Exchange;
 using Media.Core.Entities;
 using Media.Core.Exceptions;
 using Media.Persistence;
@@ -81,20 +82,35 @@ namespace Media.Infrastructure.Services
         /// Gets all media items created by the given token.
         /// </summary>
         /// <param name="token">Token to look for.</param>
+        /// <param name="pagination">Pagination object.</param>
         /// <returns>List of all media items.</returns>
-        public async Task<GetMediaItemsByTokenResponse> ByToken(string token)
+        public async Task<GetMediaItemsByTokenResponse> ByToken(string token, PaginationReq pagination)
         {
+            var skipCount = (pagination.PageNumber - 1) * pagination.PageSize;
+            
             var items = await this._context.MediaItems
                 .Where(mediaItem => mediaItem.CreatedByToken == token)
+                .OrderBy(mediaItem => mediaItem.CreatedOn)
+                .Skip(skipCount)
+                .Take(pagination.PageSize)
                 .ToListAsync();
 
-            return new GetMediaItemsByTokenResponse(items.Select(mediaItem => new MinimumMediaItemDto
-            {
-                Id = mediaItem.Id,
-                Title = mediaItem.Title,
-                CreatedOn = mediaItem.CreatedOn,
-                UpdatedOn = mediaItem.UpdatedOn
-            }).ToList());
+            var totalItems = await this._context.MediaItems
+                .Where(mediaItem => mediaItem.CreatedByToken == token)
+                .CountAsync();
+
+            var totalPages = (int)Math.Ceiling((double)totalItems / pagination.PageSize);
+
+            return new GetMediaItemsByTokenResponse(
+                Items: items.Select(mediaItem => new MinimumMediaItemDto
+                {
+                    Id = mediaItem.Id,
+                    Title = mediaItem.Title,
+                    CreatedOn = mediaItem.CreatedOn,
+                    UpdatedOn = mediaItem.UpdatedOn
+                }).ToList(),
+                Pagination: new PaginationRes(pagination.PageNumber, pagination.PageSize, totalItems, totalPages)
+            );
         }
 
         /// <summary>

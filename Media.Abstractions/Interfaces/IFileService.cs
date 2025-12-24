@@ -1,4 +1,4 @@
-﻿using Media.Core.Dtos;
+﻿using Media.Core.Dtos.Exchange;
 using Microsoft.AspNetCore.Http;
 
 namespace Media.Abstractions.Interfaces

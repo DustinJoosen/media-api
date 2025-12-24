@@ -1,4 +1,4 @@
-﻿using Media.Core.Dtos;
+﻿using Media.Core.Dtos.Exchange;
 using Media.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

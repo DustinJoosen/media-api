@@ -1,6 +1,6 @@
 ﻿using Media.Core.Entities;
 
-namespace Media.Core.Dtos
+namespace Media.Core.Dtos.Exchange
 {
     /// <summary>
     /// Input for token creation.

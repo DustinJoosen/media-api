@@ -1,5 +1,6 @@
 ﻿using Media.Abstractions.Interfaces;
 using Media.Core.Dtos;
+using Media.Core.Dtos.Exchange;
 using Media.Presentation.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
@@ -66,10 +67,10 @@ namespace Media.Presentation.Controllers
         [HttpGet]
         [Route("items-by-tokens")]
         [TokenValid]
-        public async Task<GetMediaItemsByTokenResponse> GetItemsByToken()
+        public async Task<GetMediaItemsByTokenResponse> GetItemsByToken([FromQuery] PaginationReq pagination)
         {
             string token = this.Request.Headers.Authorization.ToString();
-            return await this._mediaItemService.ByToken(token);
+            return await this._mediaItemService.ByToken(token, pagination);
         }
 
         /// <summary>
@@ -82,7 +83,7 @@ namespace Media.Presentation.Controllers
         {
             string token = this.Request.Headers.Authorization.ToString();
             await this._mediaItemService.DeleteById(id, token);
-            return Ok();
+            return this.Ok();
         }
     }
 }

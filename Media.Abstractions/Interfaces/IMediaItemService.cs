@@ -1,4 +1,5 @@
 ﻿using Media.Core.Dtos;
+using Media.Core.Dtos.Exchange;
 
 namespace Media.Abstractions.Interfaces
 {
@@ -30,8 +31,9 @@ namespace Media.Abstractions.Interfaces
         /// Gets all media items created by the given token.
         /// </summary>
         /// <param name="token">Token to look for.</param>
+        /// <param name="pagination">Pagination object.</param>
         /// <returns>List of all media items.</returns>
-        Task<GetMediaItemsByTokenResponse> ByToken(string token);
+        Task<GetMediaItemsByTokenResponse> ByToken(string token, PaginationReq pagination);
 
         /// <summary>
         /// Deletes the MediaItem data record and the folder/contents from the id.

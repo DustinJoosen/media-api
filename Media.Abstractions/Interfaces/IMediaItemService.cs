@@ -26,7 +26,15 @@ namespace Media.Abstractions.Interfaces
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Download information about the file.</returns>
         Task<GetMediaItemDownloadResponse> GetMediaItemFileStreamDownload(Guid id);
-        
+
+        /// <summary>
+        /// Gets info of the MediaItem.
+        /// </summary>
+        /// <param name="id">Id of the specified media item.</param>
+        /// <returns>Meta info of the MediaItem.</returns>
+        Task<GetMediaItemInfoResponse> GetInfo(Guid id);
+
+
         /// <summary>
         /// Gets all media items created by the given token.
         /// </summary>

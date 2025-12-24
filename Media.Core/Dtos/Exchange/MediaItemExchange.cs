@@ -31,6 +31,14 @@ namespace Media.Core.Dtos.Exchange
     public record GetMediaItemDownloadResponse(FileStream FileStream, string FileName, string MimeType);
 
     /// <summary>
+    /// Output for file info.
+    /// </summary>
+    /// <param name="CreatedBy">Who created the media item.</param>
+    /// <param name="Title">Title of the media item.</param>
+    /// <param name="Description">Description of the media item.</param>
+    public record GetMediaItemInfoResponse(string CreatedBy, string? Title, string? Description);
+
+    /// <summary>
     /// Output for media retrieval. Contains all files created by a token.
     /// </summary>
     /// <param name="Items">List of all items.</param>

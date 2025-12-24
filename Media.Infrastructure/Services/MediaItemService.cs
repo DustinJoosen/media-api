@@ -77,6 +77,20 @@ namespace Media.Infrastructure.Services
             return this._fileService.GetFileStreamDownload(id);
         }
 
+        /// <summary>
+        /// Gets info of the MediaItem.
+        /// </summary>
+        /// <param name="id">Id of the specified media item.</param>
+        /// <returns>Meta info of the MediaItem.</returns>
+        public async Task<GetMediaItemInfoResponse> GetInfo(Guid id)
+        {
+            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id);
+            if (item == null)
+                throw new NotFoundException("Media Item is not found");
+
+            return new GetMediaItemInfoResponse(item.CreatedByToken, item.Title, item.Description);
+        }
+
 
         /// <summary>
         /// Gets all media items created by the given token.

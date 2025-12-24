@@ -22,8 +22,6 @@ namespace Media.Presentation.Controllers
         /// <summary>
         /// Gets a preview filestream of the media item.
         /// </summary>
-        /// <param name="id">Id of the media item.</param>
-        /// <returns>Open filestream.</returns>
         [HttpGet]
         [Route("{id}/preview")]
         [ProducesResponseType(typeof(FileStream), StatusCodes.Status200OK)]
@@ -36,8 +34,6 @@ namespace Media.Presentation.Controllers
         /// <summary>
         /// Gets a download stream of the media item.
         /// </summary>
-        /// <param name="id">Id of the media item.</param>
-        /// <returns>Download filestream.</returns>
         [HttpGet]
         [Route("{id}/download")]
         public async Task<FileStreamResult> GetFileStreamDownload([FromRoute] Guid id)
@@ -48,9 +44,19 @@ namespace Media.Presentation.Controllers
         }
 
         /// <summary>
+        /// Gets metadata of the media item.
+        /// </summary>
+        [HttpGet]
+        [Route("{id}/info")]
+        public async Task<GetMediaItemInfoResponse> GetFileInfo([FromRoute] Guid id)
+        {
+            var mediaFile = await this._mediaItemService.GetInfo(id);
+            return mediaFile;
+        }
+
+        /// <summary>
         /// Uploads a media item to the file storage.
         /// </summary>
-        /// <returns>Id of the created media item.</returns>
         [HttpPost]
         [Route("upload")]
         [TokenValid]

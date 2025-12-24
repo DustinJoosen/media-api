@@ -152,5 +152,34 @@ namespace Media.Infrastructure.Services
                 throw;
             }
         }
+
+        /// <summary>
+        /// Modifies the MediaItem data record.
+        /// </summary>
+        /// <param name="id">Id of the MediaItem to modify.</param>
+        /// <param name="token">Token to proof you have the correct deletion rights.</param>
+        /// <param name="modifyMediaItemReq">new title and description</param>
+        public async Task ModifyById(Guid id, string token, ModifyMediaItemRequest modifyMediaItemReq)
+        {
+            // Validation.
+            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id);
+            if (item == null)
+                throw new NotFoundException("Media Item is not found");
+
+            var tokenInfo = await this._tokenService.FindTokenInfo(token);
+            if (!tokenInfo.Permissions.HasFlag(AuthTokenPermissions.CanModify))
+                throw new UnauthorizedException("Could not modify this media item. Provided token does not have the CanModify permission.");
+
+            if (item.CreatedByToken != token)
+                throw new UnauthorizedException("Could not modify this media item. Provided token does not own media item.");
+
+            // Update the media items. Note: they can be set to null
+            item.Title = modifyMediaItemReq.Title;
+            item.Description = modifyMediaItemReq.Description;
+
+            // Update the database.
+            this._context.MediaItems.Update(item);
+            await this._context.SaveChangesAsync();
+        }
     }
 }

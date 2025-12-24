@@ -36,5 +36,12 @@ namespace Media.Core.Dtos.Exchange
     /// <param name="Items">List of all items.</param>
     /// <param name="Pagination">Pagination for the items.</param>
     public record GetMediaItemsByTokenResponse(List<MinimumMediaItemDto> Items, PaginationRes Pagination);
+
+    /// <summary>
+    /// Input for media modification.
+    /// </summary>
+    /// <param name="Title">Optional new title.</param>
+    /// <param name="Description">Optional new description.</param>
+    public record ModifyMediaItemRequest(string? Title, string? Description);
 }
 

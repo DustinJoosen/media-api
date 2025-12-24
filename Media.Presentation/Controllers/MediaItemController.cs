@@ -63,7 +63,6 @@ namespace Media.Presentation.Controllers
         /// <summary>
         /// Gets all media items created by the given token.
         /// </summary>
-        /// <returns>List of all media items.</returns>
         [HttpGet]
         [Route("items-by-tokens")]
         [TokenValid]
@@ -71,6 +70,19 @@ namespace Media.Presentation.Controllers
         {
             string token = this.Request.Headers.Authorization.ToString();
             return await this._mediaItemService.ByToken(token, pagination);
+        }
+
+        /// <summary>
+        /// Modifies the title or description of a media item.
+        /// </summary>
+        [HttpPut]
+        [Route("{id}/modify")]
+        [TokenValid]
+        public async Task<IActionResult> ModifyMediaItem([FromRoute] Guid id, [FromBody] ModifyMediaItemRequest modifyMediaItemReq)
+        {
+            string token = this.Request.Headers.Authorization.ToString();
+            await this._mediaItemService.ModifyById(id, token, modifyMediaItemReq);
+            return this.Ok();
         }
 
         /// <summary>

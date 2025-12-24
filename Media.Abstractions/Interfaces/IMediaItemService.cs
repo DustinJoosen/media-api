@@ -41,5 +41,13 @@ namespace Media.Abstractions.Interfaces
         /// <param name="id">Id of the MediaItem to delete.</param>
         /// <param name="token">Token to proof you have the correct deletion rights.</param>
         Task DeleteById(Guid id, string token);
+
+        /// <summary>
+        /// Modifies the MediaItem data record.
+        /// </summary>
+        /// <param name="id">Id of the MediaItem to modify.</param>
+        /// <param name="token">Token to proof you have the correct deletion rights.</param>
+        /// <param name="modifyMediaItemReq">new title and description</param>
+        Task ModifyById(Guid id, string token, ModifyMediaItemRequest modifyMediaItemReq);
     }
 }

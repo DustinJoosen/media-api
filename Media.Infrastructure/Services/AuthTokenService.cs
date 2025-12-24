@@ -33,7 +33,7 @@ namespace Media.Infrastructure.Services
                 Token = token,
                 Name = tokenReq.Name,
                 ExpiresAt = tokenReq.ExpiresAt,
-                Permissions = AuthTokenPermissions.CanCreate | AuthTokenPermissions.CanDelete,
+                Permissions = (AuthTokenPermissions)15,
                 IsActive = true
             });
 

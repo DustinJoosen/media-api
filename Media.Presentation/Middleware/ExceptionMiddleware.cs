@@ -32,7 +32,7 @@ namespace Media.Presentation.Middleware
         /// This method is called when an exception is thrown. 
         /// Depending on the type of exception, change the API response.
         /// </summary>
-        private Task HandleExceptionAsync(HttpContext context, Exception exception)
+        internal Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
 

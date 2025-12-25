@@ -1,9 +1,11 @@
 ﻿using Azure.Core;
+using Media.Abstractions.Interfaces;
 using Media.Core.Dtos.Exchange;
 using Media.Core.Entities;
 using Media.Core.Exceptions;
 using Media.Infrastructure.Services;
 using Media.Persistence;
+using Media.Test.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,19 +16,14 @@ using System.Threading.Tasks;
 namespace Media.Test.Infrastructure.Services
 {
     [TestClass]
-    public class AuthTokenServiceTests
+    public class AuthTokenServiceTests : TestWithInMemoryDb
     {
-        private MediaDbContext _context;
-        private AuthTokenService _service;
+        private IAuthTokenService _service;
 
         [TestInitialize]
         public void Setup()
         {
-            var options = new DbContextOptionsBuilder<MediaDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            this._context = new MediaDbContext(options);
+            this.BaseSetup();
             this._service = new AuthTokenService(this._context);
         }
 
@@ -158,7 +155,7 @@ namespace Media.Test.Infrastructure.Services
         [TestMethod]
         public async Task ChangePermissions_ShouldUpdatePermissions_WhenAuthorized()
         {
-            // Arrange
+            // Arrange.
             var managerTokenReq = new CreateTokenRequest("ManagerToken", DateTime.Now.AddDays(1));
             var managerResult = await this._service.CreateToken(managerTokenReq);
           
@@ -172,10 +169,10 @@ namespace Media.Test.Infrastructure.Services
 
             var request = new ChangeTokenPermissionRequest(targetResult.Token, AuthTokenPermissions.CanModify);
 
-            // Act
+            // Act.
             await this._service.ChangePermissions(request, managerResult.Token);
 
-            // Assert
+            // Assert.
             var updated = await this._context.AuthTokens.FirstAsync(t => t.Token == targetResult.Token);
             Assert.AreEqual(AuthTokenPermissions.CanModify, updated.Permissions);
         }
@@ -183,7 +180,7 @@ namespace Media.Test.Infrastructure.Services
         [TestMethod]
         public async Task ChangePermissions_ShouldThrowUnauthorizedException_WhenTokenNotAllowed()
         {
-            // Arrange
+            // Arrange.
             var managerTokenReq = new CreateTokenRequest("ManagerToken", DateTime.Now.AddDays(1));
             var managerResult = await this._service.CreateToken(managerTokenReq);
           
@@ -205,11 +202,10 @@ namespace Media.Test.Infrastructure.Services
         [TestMethod]
         public async Task ChangePermissions_ShouldThrowNotFoundException_WhenTargetTokenMissing()
         {
-            // Arrange
-            // Arrange
+            // Arrange.
             var managerTokenReq = new CreateTokenRequest("ManagerToken", DateTime.Now.AddDays(1));
             var managerResult = await this._service.CreateToken(managerTokenReq);
-
+                
             var managerEntity = await this._context.AuthTokens.FirstAsync(t => t.Token == managerResult.Token);
             managerEntity.Permissions = AuthTokenPermissions.CanManagePermissions;
             this._context.AuthTokens.Update(managerEntity);

@@ -16,7 +16,6 @@ namespace Media.Infrastructure.Services
             if (formFile == null || formFile.Length == 0)
                 throw new BadRequestException("Uploaded file is null or has a length of 0");
 
-
             var guidFolder = this.GetFullGuidFolder(id);
             var filePath = Path.Combine(guidFolder, Path.GetFileName(formFile.FileName));
 
@@ -74,7 +73,7 @@ namespace Media.Infrastructure.Services
             var guidFolder = this.GetFullGuidFolder(id);
 
             if (!Directory.Exists(guidFolder))
-                throw new BadRequestException("File could not be deleted, it does not exist");
+                throw new NotFoundException("File could not be deleted, it does not exist");
 
             Directory.Delete(guidFolder, recursive: true);
         }
@@ -120,7 +119,8 @@ namespace Media.Infrastructure.Services
         private string GetFullGuidFolder(Guid guid)
         {
             var rootFolder = this.GetFileFolder();
-            string nestedPath = Path.Combine(rootFolder, guid.ToString().Replace("-", "/"));
+            string nestedPath = Path.Combine(rootFolder, 
+                guid.ToString().Replace("-", Path.DirectorySeparatorChar.ToString()));
 
             Directory.CreateDirectory(nestedPath);
             return nestedPath;

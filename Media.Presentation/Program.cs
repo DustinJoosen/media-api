@@ -2,6 +2,7 @@ using Media.Persistence;
 using Media.Infrastructure;
 using Media.Presentation.SwaggerGen;
 using Media.Presentation.Middleware;
+using Media.Presentation.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,9 @@ builder.Services.AddCors(opt =>
 
 builder.Services.ConfigurePersistence(builder.Configuration);
 builder.Services.ConfigureInfrastructure(builder.Configuration);
+
+// Start the Runtime right away instead of when /health is first called.
+HealthController.AppRunningTime = DateTime.Now;
 
 var app = builder.Build();
 

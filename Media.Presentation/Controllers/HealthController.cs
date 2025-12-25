@@ -12,7 +12,7 @@ namespace Media.Presentation.Controllers
     [ApiController]
     public class HealthController : ControllerBase
     {
-        private static readonly DateTime AppRunningTime = DateTime.UtcNow;
+        public static DateTime AppRunningTime;
         private readonly IWebHostEnvironment _env;
         private readonly MediaDbContext _context;
 
@@ -29,51 +29,64 @@ namespace Media.Presentation.Controllers
         [Route("")]
         public async Task<HealthResponse> Health()
         {
-            // Environment and configuration.
-            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
-            var configuration = environment == "Development" ? "Debug" : "Release";
-
-            // Uptime of the API.
-            var uptime = (DateTime.UtcNow - AppRunningTime).ToString(@"dd\.hh\:mm\:ss");
-            var startTime = AppRunningTime.ToString("yyyy-MM-dd HH:mm:ss");
-
-            // Database connection.
-            var databaseInformation = await this.GetDatabaseInformation();
+            // Runtime.
+            var runtime = this.GetRuntimeInformation();
+            
+            // Dependencies.
+            var dependencies = await this.GetDependenciesInformation();
 
             // Output formatting.
             return new HealthResponse(
                 Status: "Ok",
-                Environment: environment,
-                Configuration: configuration,
-                Uptime: uptime,
-                StartTime: startTime,
-                Database: databaseInformation);
+                Version: "1.0.0",
+                Runtime: runtime,
+                Dependencies: dependencies);
         }
 
 
         /// <summary>
-        /// Get the database health information.
+        /// Get the runtime information.
         /// </summary>
-        /// <returns>Database server information.</returns>
-        private async Task<HealthDatabaseResponse> GetDatabaseInformation()
+        /// <returns>All information about the runtime.</returns>
+        private RuntimeResponse GetRuntimeInformation()
+        {
+
+            // Environment and configuration.
+            var environment = this._env.EnvironmentName;
+
+#if DEBUG
+            string build = "Debug";
+#elif RELEASE
+            string build = "Release";
+#endif
+
+            // Uptime of the API.
+            var startTime = AppRunningTime.ToString("yyyy-MM-dd HH:mm:ss");
+            var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            var uptimeSpan = DateTime.Now - AppRunningTime;
+            var uptime = $"{(int)uptimeSpan.TotalHours}h {uptimeSpan.Minutes}m {uptimeSpan.Seconds}s";
+
+
+            return new RuntimeResponse(environment, build, startTime, uptime, timestamp);
+        }
+
+        /// <summary>
+        /// Get the dependency information.
+        /// </summary>
+        /// <returns>All information about the dependencies.</returns>
+        private async Task<DependenciesResponse> GetDependenciesInformation()
         {
             try
             {
                 await this._context.Database.OpenConnectionAsync();
-                var connection = this._context.Database.GetDbConnection();
-
-                return new HealthDatabaseResponse(
-                    IsRunning: true,
-                    Server: connection.DataSource,
-                    Version: connection.ServerVersion);
+                return new DependenciesResponse(Database: "Healthy");
             }
             catch
             {
-                return new HealthDatabaseResponse(
-                    IsRunning: false,
-                    Server: "N/A",
-                    Version: "N/A");
+                return new DependenciesResponse(Database: "Down");
             }
         }
+
     }
 }

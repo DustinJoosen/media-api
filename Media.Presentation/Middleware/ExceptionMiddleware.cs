@@ -36,12 +36,22 @@ namespace Media.Presentation.Middleware
         {
             context.Response.ContentType = "application/json";
 
+            // Exceptions can add custom headers by overriding GetHeaders().
+            if (exception is CustomException customException)
+            {
+                foreach (var header in customException.GetHeaders())
+                {
+                    context.Response.Headers[header.Key] = header.Value;
+                }
+            }
+
             context.Response.StatusCode = exception switch
             {
                 BadRequestException _ => StatusCodes.Status400BadRequest,
                 UnauthorizedException _ => StatusCodes.Status401Unauthorized,
                 NotFoundException _ => StatusCodes.Status404NotFound,
                 AlreadyUsedException _ => StatusCodes.Status409Conflict,
+                TooManyRequestsException _ => StatusCodes.Status429TooManyRequests,
                 DatabaseOperationException _ => StatusCodes.Status500InternalServerError,
                 _ => StatusCodes.Status500InternalServerError,
             };

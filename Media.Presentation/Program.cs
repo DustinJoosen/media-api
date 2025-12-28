@@ -2,6 +2,7 @@ using Media.Persistence;
 using Media.Infrastructure;
 using Media.Presentation.SwaggerGen;
 using Media.Presentation.Middleware;
+using Media.Core.Options;
 using Media.Presentation.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGeneration();
+
+builder.Services.AddMemoryCache();
+builder.Services.Configure<RateLimitingOptions>(builder.Configuration.GetSection("RateLimiting"));
 
 builder.Services.AddCors(opt =>
 {
@@ -35,6 +39,7 @@ app.UseSwaggerUI();
 app.UseCors("AllowAll");
 
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<RateLimitingMiddleware>();
 
 app.UseHttpsRedirection();
 

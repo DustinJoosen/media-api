@@ -76,7 +76,23 @@ namespace Media.Test.Presentation.Middleware
             // Assert.
             Assert.AreEqual(409, context.Response.StatusCode);
         }
-        
+
+        [TestMethod]
+        public async Task HandleExceptionAsync_WritesStatus429TooManyRequests_WhenTooManyRequestsException()
+        {
+            // Arrange.
+            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask);
+            var context = new DefaultHttpContext();
+            context.Response.Body = new MemoryStream();
+            var exception = new TooManyRequestsException("Too many requests! Get rate limited!", 50, 0, 7);
+
+            // Act.
+            await middleware.HandleExceptionAsync(context, exception);
+
+            // Assert.
+            Assert.AreEqual(429, context.Response.StatusCode);
+        }
+
         [TestMethod]
         public async Task HandleExceptionAsync_WritesStatus500InternalServerError_WhenDatabaseOperationException()
         {

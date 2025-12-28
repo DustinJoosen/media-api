@@ -33,7 +33,7 @@ namespace Media.Presentation.Middleware
         /// If the request goes over the limit, it throws a TooManyRequest exception.
         /// When the time window expires, the counter is reset back to 0.
         /// </summary>
-        internal async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context)
         {
             var key = context.Connection?.RemoteIpAddress?.ToString() ?? "unkown";
 

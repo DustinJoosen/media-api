@@ -11,9 +11,12 @@ namespace Media.Presentation.Middleware
     public class ExceptionMiddleware
     {
         private readonly RequestDelegate _next;
-        public ExceptionMiddleware(RequestDelegate next)
+        private readonly IWebHostEnvironment _env;
+
+        public ExceptionMiddleware(RequestDelegate next, IWebHostEnvironment env)
         {
             this._next = next;
+            this._env = env;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -55,10 +58,15 @@ namespace Media.Presentation.Middleware
                 DatabaseOperationException _ => StatusCodes.Status500InternalServerError,
                 _ => StatusCodes.Status500InternalServerError,
             };
+
+            string message = context.Response.StatusCode == 500 && this._env.IsProduction()
+                ? "Something has gone wrong."
+                : exception.Message;
+
             var response = new
             {
                 statusCode = context.Response.StatusCode,
-                message = exception.Message
+                message
             };
             return context.Response.WriteAsJsonAsync(response);
         }

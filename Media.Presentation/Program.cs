@@ -6,6 +6,7 @@ using Media.Core.Options;
 using Media.Presentation.Controllers;
 using Serilog;
 using Serilog.Events;
+using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,10 @@ builder.Host.UseSerilog();
 
 builder.Services.AddMemoryCache();
 builder.Services.Configure<RateLimitingOptions>(builder.Configuration.GetSection("RateLimiting"));
+builder.Services.Configure<UploadPolicyOptions>(builder.Configuration.GetSection("UploadPolicy"));
+
+builder.WebHost.ConfigureKestrel(options =>
+    options.Limits.MaxRequestBodySize = long.Parse(builder.Configuration["UploadPolicy:MaxFileSize"] + 1 ?? "-1"));
 
 builder.Services.AddCors(opt =>
 {

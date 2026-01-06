@@ -3,11 +3,13 @@ using Media.Abstractions.Interfaces;
 using Media.Core.Dtos.Exchange;
 using Media.Core.Entities;
 using Media.Core.Exceptions;
+using Media.Core.Options;
 using Media.Infrastructure.Services;
 using Media.Persistence;
 using Media.Test.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,18 +21,25 @@ namespace Media.Test.Infrastructure.Services
     [TestClass]
     public class MediaItemServiceTests : TestWithInMemoryDb
     {
-        private IAuthTokenService _authTokenService;
-        private IMediaItemService _mediaItemService;
+        private AuthTokenService _authTokenService;
+        private MediaItemService _mediaItemService;
 
         private string _testingToken;
+
+        private IOptions<UploadPolicyOptions> _options;
 
         [TestInitialize]
         public async Task Setup()
         {
             this.BaseSetup();
 
+            this._options = Options.Create(new UploadPolicyOptions(20, new List<string> { ".exe" }));
             this._authTokenService = new AuthTokenService(this._context);
-            this._mediaItemService = new MediaItemService(this._authTokenService, this._context, new TestingFileService());
+            this._mediaItemService = new MediaItemService(
+                this._authTokenService,
+                this._context,
+                new TestingFileService(),
+                this._options);
 
             var request = new CreateTokenRequest("TestingToken", DateTime.Now.AddDays(1));
             var result = await this._authTokenService.CreateToken(request);
@@ -361,12 +370,55 @@ namespace Media.Test.Infrastructure.Services
         }
 
 
-        private IFormFile CreateFakeFormFile()
+        [TestMethod]
+        public void CheckFormFileValid_ShouldPass_ForValidFile()
         {
-            var content = "fake media file";
-            var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+            // Arrange.
+            var file = this.CreateFakeFormFile(content: "ABC");
+            
+            // Act.
+            this._mediaItemService.CheckFormFileValid(file);
+            
+            // Assert.
+        }
 
-            return new FormFile(stream, 0, stream.Length, "file", "test.jpg");
+        [TestMethod]
+        public void CheckFormFileValid_ShouldThrow_ForBlockedExtension()
+        {
+            // Arrange.
+            var file = this.CreateFakeFormFile(fileName: "malware.exe");
+
+            // Act.
+            var ex = Assert.ThrowsException<BadRequestException>(() =>
+                this._mediaItemService.CheckFormFileValid(file)
+            );
+
+            // Assert.
+            Assert.AreEqual("Files of type '.exe' are not allowed.", ex.Message);
+        }
+
+        [TestMethod]
+        public void CheckFormFileValid_ShouldThrow_ForTooLargeFile()
+        {
+            // Arrange.
+            var file = CreateFakeFormFile(content: "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+
+            // Act.
+            var ex = Assert.ThrowsException<BadRequestException>(() =>
+                this._mediaItemService.CheckFormFileValid(file)
+            );
+
+            // Assert.
+            Assert.AreEqual($"File is too large. Limit is {this._options.Value.MaxFileSize} bytes.", ex.Message);
+        }
+
+        private IFormFile CreateFakeFormFile(string? content = null, string fileName = "test.jpg")
+        {
+            if (content == null)
+                content = "fake media file";
+
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+            return new FormFile(stream, 0, stream.Length, "file", fileName);
         }
 
         [TestCleanup]

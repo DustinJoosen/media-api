@@ -10,7 +10,7 @@ namespace Media.Persistence
         {
             services.AddDbContext<MediaDbContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
 
             return services;

@@ -3,9 +3,15 @@ using Media.Core.Dtos;
 using Media.Core.Dtos.Exchange;
 using Media.Core.Entities;
 using Media.Core.Exceptions;
+using Media.Core.Options;
 using Media.Persistence;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 
+[assembly: InternalsVisibleTo("Media.Test")]
 namespace Media.Infrastructure.Services
 {
     public class MediaItemService : IMediaItemService
@@ -13,11 +19,15 @@ namespace Media.Infrastructure.Services
         private readonly IAuthTokenService _tokenService;
         private readonly IFileService _fileService;
         private readonly MediaDbContext _context;
-        public MediaItemService(IAuthTokenService tokenService, MediaDbContext context, IFileService fileService)
+        private readonly UploadPolicyOptions _options;
+
+        public MediaItemService(IAuthTokenService tokenService, MediaDbContext context,
+            IFileService fileService, IOptions<UploadPolicyOptions> options)
         {
             this._tokenService = tokenService;
             this._fileService = fileService;
             this._context = context;
+            this._options = options.Value;
         }
 
         /// <summary>
@@ -28,6 +38,8 @@ namespace Media.Infrastructure.Services
         /// <returns>Created media item object.</returns>
         public async virtual Task<UploadMediaItemResponse> UploadMediaItem(UploadMediaItemRequest mediaItemReq, string token)
         {
+            this.CheckFormFileValid(mediaItemReq.FormFile);
+
             var tokenInfo = await this._tokenService.FindTokenInfo(token);
             if (!tokenInfo.Permissions.HasFlag(AuthTokenPermissions.CanCreate))
                 throw new UnauthorizedException("Could not upload this media item. Provided token does not have the CanCreate permission.");
@@ -193,6 +205,21 @@ namespace Media.Infrastructure.Services
             // Update the database.
             this._context.MediaItems.Update(item);
             await this._context.SaveChangesAsync();
+        }
+
+        /// <summary>
+        /// Ensures the form is less then the maximum allowed file size, and 
+        /// is not a blocked filetype.
+        /// </summary>
+        /// <param name="formFile">File to check.</param>
+        internal void CheckFormFileValid(IFormFile formFile)
+        {
+            if (formFile.Length > this._options.MaxFileSize)
+                throw new BadRequestException($"File is too large. Limit is {this._options.MaxFileSize} bytes.");
+
+            var extension = Path.GetExtension(formFile.FileName);
+            if (this._options.BlockedFileExtensions.Any(be => be.Equals(extension, StringComparison.OrdinalIgnoreCase)))
+                throw new BadRequestException($"Files of type '{extension}' are not allowed.");
         }
     }
 }

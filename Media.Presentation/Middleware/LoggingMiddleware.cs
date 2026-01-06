@@ -33,16 +33,16 @@ namespace Media.Presentation.Middleware
             if (context.Request.ContentLength > 0)
             {
                 context.Request.EnableBuffering();
-                using var reader = new StreamReader(context.Request.Body, Encoding.UTF8, true);
+                var reader = new StreamReader(context.Request.Body, Encoding.UTF8, true);
 
                 body = await reader.ReadToEndAsync();
                 context.Request.Body.Position = 0;
             }
 
-            await this._next(context);
-
             this._logger.LogInformation("Request {@Timestamp}: {@Method} {@Path}, Auth: {@Auth}, Body: {@Body}",
                 timestamp, method, path, authHeader ?? "none", body != null ? this.Truncate(body, 200) : "empty");
+
+            await this._next(context);
         }
 
         /// <summary>

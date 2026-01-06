@@ -10,10 +10,7 @@ namespace Media.Persistence
         {
             services.AddDbContext<MediaDbContext>(options =>
             {
-                string connectionString = configuration.GetConnectionString("DefaultConnection")!;
-
-                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-                options.EnableDetailedErrors();
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
             });
 
             return services;

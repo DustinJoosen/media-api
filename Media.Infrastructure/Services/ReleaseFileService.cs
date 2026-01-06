@@ -11,7 +11,7 @@ namespace Media.Infrastructure.Services
         /// Uploads a formfile to the file storage.
         /// </summary>
         /// <param name="formFile">File to upload.</param>
-        public async Task UploadFile(Guid id, IFormFile formFile)
+        public virtual async Task UploadFile(Guid id, IFormFile formFile)
         {
             if (formFile == null || formFile.Length == 0)
                 throw new BadRequestException("Uploaded file is null or has a length of 0");

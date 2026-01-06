@@ -52,10 +52,24 @@ namespace Media.Infrastructure.Services
                 Description = mediaItemReq.Description
             };
 
-            await this._fileService.UploadFile(mediaItem.Id, mediaItemReq.FormFile);
+            using var transaction = await this._context.Database.BeginTransactionAsync();
 
-            this._context.MediaItems.Add(mediaItem);
-            await this._context.SaveChangesAsync();
+            try
+            {
+                await this._fileService.UploadFile(mediaItem.Id, mediaItemReq.FormFile);
+                this._context.MediaItems.Add(mediaItem);
+                
+                // Save it.
+                await this._context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                // Undo everything.
+                this._fileService.DeleteFolder(mediaItem.Id);
+                await transaction.RollbackAsync();
+                throw;
+            }
 
             return new(mediaItem.Id);
         }
@@ -161,18 +175,15 @@ namespace Media.Infrastructure.Services
 
             try
             {
-                // Deletion of data record.
                 this._context.MediaItems.Remove(item);
                 await this._context.SaveChangesAsync();
-
-                // Deletion of folder.
+             
                 this._fileService.DeleteFolder(id);
-
-                // Execute transaction.
                 await transaction.CommitAsync();
             }
             catch
             {
+                // Undo everything.
                 await transaction.RollbackAsync();
                 throw;
             }

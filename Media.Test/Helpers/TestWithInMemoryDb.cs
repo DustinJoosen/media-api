@@ -22,7 +22,7 @@ namespace Media.Test.Helpers
                 .ConfigureWarnings(w => w.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                 .Options;
 
-            _context = new MediaDbContext(options);
+            this._context = new MediaDbContext(options);
         }
     }
 }

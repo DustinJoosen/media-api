@@ -24,7 +24,7 @@ namespace Media.Test.Infrastructure.Services
         private AuthTokenService _authTokenService;
         private MediaItemService _mediaItemService;
 
-        private string _testingToken;
+        private string _testingToken = string.Empty;
 
         private IOptions<UploadPolicyOptions> _options;
 
@@ -38,7 +38,7 @@ namespace Media.Test.Infrastructure.Services
             this._mediaItemService = new MediaItemService(
                 this._authTokenService,
                 this._context,
-                new TestingFileService(),
+                new TestingFileService() { ShouldThrowOnUpload = false },
                 this._options);
 
             var request = new CreateTokenRequest("TestingToken", DateTime.Now.AddDays(1));
@@ -82,8 +82,28 @@ namespace Media.Test.Infrastructure.Services
                 await this._mediaItemService.UploadMediaItem(mediaRequest, tokenResult.Token);
             });
 
+            // Assert.
             Assert.AreEqual("Could not upload this media item. Provided token does not have the CanCreate permission.", ex.Message);
         }
+
+        [TestMethod]
+        public async Task UploadMediaItem_ShouldNotSaveDb_WhenFileFails()
+        {
+            // Arrange.
+            var request = new UploadMediaItemRequest("Testing File", null, this.CreateFakeFormFile());
+            var service = new MediaItemService(
+                this._authTokenService, this._context, new TestingFileService() { ShouldThrowOnUpload = true }, this._options);
+
+            // Act.
+            var ex = await Assert.ThrowsExceptionAsync<Exception>(async () =>
+                await service.UploadMediaItem(request, this._testingToken)
+            );
+
+            // Assert.
+            Assert.AreEqual(0, await this._context.MediaItems.CountAsync());
+            Assert.AreEqual("Could not upload the file on the testing file service.", ex.Message);
+        }
+
 
         [TestMethod]
         public async Task GetMediaItemFileStreamPreview_ShouldReturnFile_WhenMediaItemExists()

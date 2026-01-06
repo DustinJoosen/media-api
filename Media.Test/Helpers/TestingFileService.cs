@@ -1,9 +1,21 @@
 ﻿using Media.Abstractions.Interfaces;
+using Media.Core.Exceptions;
+using Microsoft.AspNetCore.Http;
 
 namespace Media.Infrastructure.Services
 {
     public class TestingFileService : ReleaseFileService, IFileService
     {
+        public bool ShouldThrowOnUpload { get; set; }
+
+        public override Task UploadFile(Guid id, IFormFile formFile)
+        {
+            if (this.ShouldThrowOnUpload)
+                throw new Exception("Could not upload the file on the testing file service.");
+
+            return base.UploadFile(id, formFile);
+        }
+
         /// <summary>
         /// Returns the Windows folder where the files are saved for the unit tests.
         /// </summary>

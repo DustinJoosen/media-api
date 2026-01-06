@@ -1,6 +1,11 @@
 ﻿using Media.Core.Exceptions;
 using Media.Presentation.Middleware;
+using Media.Test.Helpers;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +14,25 @@ using System.Threading.Tasks;
 
 namespace Media.Test.Presentation.Middleware
 {
+
     [TestClass]
     public class ExceptionMiddlewareTests
     {
+        private readonly IWebHostEnvironment _env;
+        private readonly ILogger<ExceptionMiddleware> _logger;
+
+        public ExceptionMiddlewareTests()
+        {
+            this._env = new FakeWebHostEnvironment();
+            this._logger = NullLogger<ExceptionMiddleware>.Instance;
+        }
+
 
         [TestMethod]
         public async Task HandleExceptionAsync_WritesStatus400BadRequest_WhenBadRequestException()
         {
             // Arrange.
-            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask);
+            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask, this._env, this._logger);
             var context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();
             var exception = new BadRequestException("Bad Request!");
@@ -33,7 +48,7 @@ namespace Media.Test.Presentation.Middleware
         public async Task HandleExceptionAsync_WritesStatus401Unauthorized_WhenUnauthorizedException()
         {
             // Arrange.
-            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask);
+            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask, this._env, this._logger);
             var context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();
             var exception = new UnauthorizedException("Unauthorized!");
@@ -49,7 +64,7 @@ namespace Media.Test.Presentation.Middleware
         public async Task HandleExceptionAsync_WritesStatus404NotFound_WhenNotFoundException()
         {
             // Arrange.
-            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask);
+            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask, this._env, this._logger);
             var context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();
             var exception = new NotFoundException("Not Found!");
@@ -65,7 +80,7 @@ namespace Media.Test.Presentation.Middleware
         public async Task HandleExceptionAsync_WritesStatus409Conflict_WhenAlreadyUsedException()
         {
             // Arrange.
-            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask);
+            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask, this._env, this._logger);
             var context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();
             var exception = new AlreadyUsedException("Already used!");
@@ -81,7 +96,7 @@ namespace Media.Test.Presentation.Middleware
         public async Task HandleExceptionAsync_WritesStatus429TooManyRequests_WhenTooManyRequestsException()
         {
             // Arrange.
-            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask);
+            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask, this._env, this._logger);
             var context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();
             var exception = new TooManyRequestsException("Too many requests! Get rate limited!", 50, 0, 7);
@@ -97,7 +112,7 @@ namespace Media.Test.Presentation.Middleware
         public async Task HandleExceptionAsync_WritesStatus500InternalServerError_WhenDatabaseOperationException()
         {
             // Arrange.
-            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask);
+            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask, this._env, this._logger);
             var context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();
             var exception = new DatabaseOperationException("Database Operation!");
@@ -113,7 +128,7 @@ namespace Media.Test.Presentation.Middleware
         public async Task HandleExceptionAsync_WritesStatus500InternalServerError_WhenOtherException()
         {
             // Arrange.
-            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask);
+            var middleware = new ExceptionMiddleware((_) => Task.CompletedTask, this._env, this._logger);
             var context = new DefaultHttpContext();
             context.Response.Body = new MemoryStream();
             var exception = new Exception("Database Operation!");

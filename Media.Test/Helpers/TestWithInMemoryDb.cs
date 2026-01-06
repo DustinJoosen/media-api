@@ -12,7 +12,6 @@ namespace Media.Test.Helpers
     [TestClass]
     public class TestWithInMemoryDb
     {
-
         protected MediaDbContext _context;
 
         [TestInitialize]

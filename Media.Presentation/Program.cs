@@ -4,12 +4,28 @@ using Media.Presentation.SwaggerGen;
 using Media.Presentation.Middleware;
 using Media.Core.Options;
 using Media.Presentation.Controllers;
+using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGeneration();
+
+// Create a logger. It ignores microsoft and system logs, but focusses on intentional logs.
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Verbose()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Fatal)
+    .MinimumLevel.Override("System", LogEventLevel.Fatal)
+    .Enrich.FromLogContext()
+    .WriteTo.File(
+        path: "Logs/log-.txt",
+        rollingInterval: RollingInterval.Day,
+        shared: true)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddMemoryCache();
 builder.Services.Configure<RateLimitingOptions>(builder.Configuration.GetSection("RateLimiting"));
@@ -39,6 +55,7 @@ app.UseSwaggerUI();
 app.UseCors("AllowAll");
 
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseMiddleware<LoggingMiddleware>();
 app.UseMiddleware<RateLimitingMiddleware>();
 
 app.UseHttpsRedirection();

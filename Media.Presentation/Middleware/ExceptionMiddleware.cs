@@ -12,11 +12,14 @@ namespace Media.Presentation.Middleware
     {
         private readonly RequestDelegate _next;
         private readonly IWebHostEnvironment _env;
+        private readonly ILogger<ExceptionMiddleware> _logger;
 
-        public ExceptionMiddleware(RequestDelegate next, IWebHostEnvironment env)
+        public ExceptionMiddleware(RequestDelegate next, IWebHostEnvironment env, 
+            ILogger<ExceptionMiddleware> logger)
         {
             this._next = next;
             this._env = env;
+            this._logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -27,6 +30,7 @@ namespace Media.Presentation.Middleware
             }
             catch (Exception ex)
             {
+                this._logger.LogError(ex.Message);
                 await this.HandleExceptionAsync(context, ex);
             }
         }

@@ -36,11 +36,11 @@ namespace Media.Infrastructure.Services
         /// <param name="mediaItemReq">Uploading info.</param>
         /// <param name="token">Token to proof you have writing rights.</param>
         /// <returns>Created media item object.</returns>
-        public async virtual Task<UploadMediaItemResponse> UploadMediaItem(UploadMediaItemRequest mediaItemReq, string token)
+        public async virtual Task<UploadMediaItemResponse> UploadMediaItem(UploadMediaItemRequest mediaItemReq, string token, CancellationToken cancellationToken = default)
         {
             this.CheckFormFileValid(mediaItemReq.FormFile);
 
-            var tokenInfo = await this._tokenService.FindTokenInfo(token);
+            var tokenInfo = await this._tokenService.FindTokenInfo(token, cancellationToken);
             if (!tokenInfo.Permissions.HasFlag(AuthTokenPermissions.CanCreate))
                 throw new UnauthorizedException("Could not upload this media item. Provided token does not have the CanCreate permission.");
 
@@ -52,22 +52,22 @@ namespace Media.Infrastructure.Services
                 Description = mediaItemReq.Description
             };
 
-            using var transaction = await this._context.Database.BeginTransactionAsync();
+            using var transaction = await this._context.Database.BeginTransactionAsync(cancellationToken);
 
             try
             {
-                await this._fileService.UploadFile(mediaItem.Id, mediaItemReq.FormFile);
+                await this._fileService.UploadFile(mediaItem.Id, mediaItemReq.FormFile, cancellationToken);
                 this._context.MediaItems.Add(mediaItem);
                 
                 // Save it.
-                await this._context.SaveChangesAsync();
-                await transaction.CommitAsync();
+                await this._context.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
             }
             catch
             {
                 // Undo everything.
                 this._fileService.DeleteFolder(mediaItem.Id);
-                await transaction.RollbackAsync();
+                await transaction.RollbackAsync(cancellationToken);
                 throw;
             }
 
@@ -79,9 +79,9 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
-        public async Task<GetMediaItemPreviewResponse> GetMediaItemFileStreamPreview(Guid id)
+        public async Task<GetMediaItemPreviewResponse> GetMediaItemFileStreamPreview(Guid id, CancellationToken cancellationToken = default)
         {
-            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id);
+            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id, cancellationToken);
             if (item == null)
                 throw new NotFoundException("Media Item is not found");
 
@@ -94,9 +94,9 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Download information about the file.</returns>
-        public async Task<GetMediaItemDownloadResponse> GetMediaItemFileStreamDownload(Guid id)
+        public async Task<GetMediaItemDownloadResponse> GetMediaItemFileStreamDownload(Guid id, CancellationToken cancellationToken = default)
         {
-            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id);
+            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id, cancellationToken);
             if (item == null)
                 throw new NotFoundException("Media Item is not found");
 
@@ -108,9 +108,9 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Meta info of the MediaItem.</returns>
-        public async Task<GetMediaItemInfoResponse> GetInfo(Guid id)
+        public async Task<GetMediaItemInfoResponse> GetInfo(Guid id, CancellationToken cancellationToken = default)
         {
-            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id);
+            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id, cancellationToken);
             if (item == null)
                 throw new NotFoundException("Media Item is not found");
 
@@ -123,7 +123,7 @@ namespace Media.Infrastructure.Services
         /// <param name="token">Token to look for.</param>
         /// <param name="pagination">Pagination object.</param>
         /// <returns>List of all media items.</returns>
-        public async Task<GetMediaItemsByTokenResponse> ByToken(string token, PaginationReq pagination)
+        public async Task<GetMediaItemsByTokenResponse> ByToken(string token, PaginationReq pagination, CancellationToken cancellationToken = default)
         {
             var skipCount = (pagination.PageNumber - 1) * pagination.PageSize;
             
@@ -132,11 +132,11 @@ namespace Media.Infrastructure.Services
                 .OrderBy(mediaItem => mediaItem.CreatedOn)
                 .Skip(skipCount)
                 .Take(pagination.PageSize)
-                .ToListAsync();
+                .ToListAsync(cancellationToken);
 
             var totalItems = await this._context.MediaItems
                 .Where(mediaItem => mediaItem.CreatedByToken == token)
-                .CountAsync();
+                .CountAsync(cancellationToken);
 
             var totalPages = (int)Math.Ceiling((double)totalItems / pagination.PageSize);
 
@@ -157,34 +157,34 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="id">Id of the MediaItem to delete.</param>
         /// <param name="token">Token to proof you have the correct deletion rights.</param>
-        public async Task DeleteById(Guid id, string token)
+        public async Task DeleteById(Guid id, string token, CancellationToken cancellationToken = default)
         {
             // Validation.
-            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id);
+            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id, cancellationToken);
             if (item == null)
                 throw new NotFoundException("Media Item is not found");
 
-            var tokenInfo = await this._tokenService.FindTokenInfo(token);
+            var tokenInfo = await this._tokenService.FindTokenInfo(token, cancellationToken);
             if (!tokenInfo.Permissions.HasFlag(AuthTokenPermissions.CanDelete))
                 throw new UnauthorizedException("Could not delete this media item. Provided token does not have the CanDelete permission.");
 
             if (item.CreatedByToken != token)
                 throw new UnauthorizedException("Could not delete this media item. Provided token does not own media item.");
 
-            using var transaction = await this._context.Database.BeginTransactionAsync();
+            using var transaction = await this._context.Database.BeginTransactionAsync(cancellationToken);
 
             try
             {
                 this._context.MediaItems.Remove(item);
-                await this._context.SaveChangesAsync();
+                await this._context.SaveChangesAsync(cancellationToken);
              
                 this._fileService.DeleteFolder(id);
-                await transaction.CommitAsync();
+                await transaction.CommitAsync(cancellationToken);
             }
             catch
             {
                 // Undo everything.
-                await transaction.RollbackAsync();
+                await transaction.RollbackAsync(cancellationToken);
                 throw;
             }
         }
@@ -195,14 +195,14 @@ namespace Media.Infrastructure.Services
         /// <param name="id">Id of the MediaItem to modify.</param>
         /// <param name="token">Token to proof you have the correct deletion rights.</param>
         /// <param name="modifyMediaItemReq">new title and description</param>
-        public async Task ModifyById(Guid id, string token, ModifyMediaItemRequest modifyMediaItemReq)
+        public async Task ModifyById(Guid id, string token, ModifyMediaItemRequest modifyMediaItemReq, CancellationToken cancellationToken = default)
         {
             // Validation.
-            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id);
+            var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id, cancellationToken);
             if (item == null)
                 throw new NotFoundException("Media Item is not found");
 
-            var tokenInfo = await this._tokenService.FindTokenInfo(token);
+            var tokenInfo = await this._tokenService.FindTokenInfo(token, cancellationToken);
             if (!tokenInfo.Permissions.HasFlag(AuthTokenPermissions.CanModify))
                 throw new UnauthorizedException("Could not modify this media item. Provided token does not have the CanModify permission.");
 
@@ -215,7 +215,7 @@ namespace Media.Infrastructure.Services
 
             // Update the database.
             this._context.MediaItems.Update(item);
-            await this._context.SaveChangesAsync();
+            await this._context.SaveChangesAsync(cancellationToken);
         }
 
         /// <summary>

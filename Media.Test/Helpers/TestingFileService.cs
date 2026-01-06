@@ -8,12 +8,12 @@ namespace Media.Infrastructure.Services
     {
         public bool ShouldThrowOnUpload { get; set; }
 
-        public override Task UploadFile(Guid id, IFormFile formFile)
+        public override Task UploadFile(Guid id, IFormFile formFile, CancellationToken cancellationToken = default)
         {
             if (this.ShouldThrowOnUpload)
                 throw new Exception("Could not upload the file on the testing file service.");
 
-            return base.UploadFile(id, formFile);
+            return base.UploadFile(id, formFile, cancellationToken);
         }
 
         /// <summary>

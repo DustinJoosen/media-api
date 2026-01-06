@@ -21,7 +21,7 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="tokenReq">Token creation information.</param>
         /// <returns>Created token.</returns>
-        public async virtual Task<CreateTokenResponse> CreateToken(CreateTokenRequest tokenReq)
+        public async virtual Task<CreateTokenResponse> CreateToken(CreateTokenRequest tokenReq, CancellationToken cancellationToken = default)
         {
             if (await this.IsNameUsed(tokenReq.Name))
                 throw new AlreadyUsedException($"Token name '{tokenReq.Name}' is already being used");
@@ -37,7 +37,7 @@ namespace Media.Infrastructure.Services
                 IsActive = true
             });
 
-            await this._context.SaveChangesAsync();
+            await this._context.SaveChangesAsync(cancellationToken);
             return new(token);
         }
 
@@ -46,9 +46,9 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="token">Token to find information of.</param>
         /// <returns>Info of the token.</returns>
-        public async virtual Task<FindTokenInfoResponse> FindTokenInfo(string token)
+        public async virtual Task<FindTokenInfoResponse> FindTokenInfo(string token, CancellationToken cancellationToken = default)
         {
-            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token);
+            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token, cancellationToken);
             if (authToken == null)
                 throw new NotFoundException($"Token '{token}' does not exist");
 
@@ -60,9 +60,9 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="token">Token to deactivate.</param>
         /// <returns>Whether the operation succeeded.</returns>
-        public async virtual Task DeactivateToken(string token)
+        public async virtual Task DeactivateToken(string token, CancellationToken cancellationToken = default)
         {
-            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token);
+            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token, cancellationToken);
             if (authToken == null)
                 throw new NotFoundException($"Token '{token}' does not exist");
 
@@ -70,7 +70,7 @@ namespace Media.Infrastructure.Services
             {
                 authToken.IsActive = false;
                 this._context.AuthTokens.Update(authToken);
-                await this._context.SaveChangesAsync();
+                await this._context.SaveChangesAsync(cancellationToken);
             } 
             catch
             {
@@ -83,9 +83,9 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="token">Token to find permissions from.</param>
         /// <returns>Permissions object of the given token.</returns>
-        public async Task<AuthTokenPermissions> GetRoles(string token)
+        public async Task<AuthTokenPermissions> GetRoles(string token, CancellationToken cancellationToken = default)
         {
-            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token);
+            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token, cancellationToken);
             if (authToken == null)
                 throw new NotFoundException($"Token '{token}' does not exist");
 
@@ -97,7 +97,7 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="changeTokenPermissionReq">The token to change, and the new permissions.</param>
         /// <param name="token">Token to proof the user is allowed to change permissions. NOT THE TOKEN THAT WILL BE CHANGED.</param>
-        public async Task ChangePermissions(ChangeTokenPermissionRequest changeTokenPermissionReq, string token)
+        public async Task ChangePermissions(ChangeTokenPermissionRequest changeTokenPermissionReq, string token, CancellationToken cancellationToken = default)
         {
             // Check that you're allowed to change the permissions.
             var roles = await this.GetRoles(token);
@@ -105,7 +105,7 @@ namespace Media.Infrastructure.Services
                 throw new UnauthorizedException("Provided token does not have the needed permissions.");
 
             // Find and check the existence of the token.
-            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == changeTokenPermissionReq.Token);
+            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == changeTokenPermissionReq.Token, cancellationToken);
             if (authToken == null)
                 throw new NotFoundException($"Token '{changeTokenPermissionReq.Token}' does not exist");
 
@@ -114,13 +114,12 @@ namespace Media.Infrastructure.Services
             {
                 authToken.Permissions = changeTokenPermissionReq.Permission;
                 this._context.AuthTokens.Update(authToken);
-                await this._context.SaveChangesAsync();
+                await this._context.SaveChangesAsync(cancellationToken);
             }
             catch
             {
                 throw new DatabaseOperationException($"Could not update token permissions");
             }
-
         }
 
         /// <summary>
@@ -128,9 +127,8 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="name">Name to check.</param>
         /// <returns>Whether the given name is already in use.</returns>
-        private async Task<bool> IsNameUsed(string name) =>
-            await this._context.AuthTokens.AnyAsync(at => at.Name == name);
-
+        private async Task<bool> IsNameUsed(string name, CancellationToken cancellationToken = default) =>
+            await this._context.AuthTokens.AnyAsync(at => at.Name == name, cancellationToken);
 
         /// <summary>
         /// Randomly generates a secure token of 64 characters long.

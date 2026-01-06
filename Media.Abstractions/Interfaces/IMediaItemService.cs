@@ -11,28 +11,28 @@ namespace Media.Abstractions.Interfaces
         /// <param name="mediaItemReq">Uploading info.</param>
         /// <param name="token">Token to proof you have writing rights.</param>
         /// <returns>Created media item object.</returns>
-        Task<UploadMediaItemResponse> UploadMediaItem(UploadMediaItemRequest mediaItemReq, string token);
+        Task<UploadMediaItemResponse> UploadMediaItem(UploadMediaItemRequest mediaItemReq, string token, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets the filestream. If it can't be previewed it will return notfound.png
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
-        Task<GetMediaItemPreviewResponse> GetMediaItemFileStreamPreview(Guid id);
+        Task<GetMediaItemPreviewResponse> GetMediaItemFileStreamPreview(Guid id, CancellationToken cancellationToken = default);
         
         /// <summary>
         /// Gets the download filestream. If it can't be previewed it will return notfound.png
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Download information about the file.</returns>
-        Task<GetMediaItemDownloadResponse> GetMediaItemFileStreamDownload(Guid id);
+        Task<GetMediaItemDownloadResponse> GetMediaItemFileStreamDownload(Guid id, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets info of the MediaItem.
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Meta info of the MediaItem.</returns>
-        Task<GetMediaItemInfoResponse> GetInfo(Guid id);
+        Task<GetMediaItemInfoResponse> GetInfo(Guid id, CancellationToken cancellationToken = default);
 
 
         /// <summary>
@@ -41,14 +41,14 @@ namespace Media.Abstractions.Interfaces
         /// <param name="token">Token to look for.</param>
         /// <param name="pagination">Pagination object.</param>
         /// <returns>List of all media items.</returns>
-        Task<GetMediaItemsByTokenResponse> ByToken(string token, PaginationReq pagination);
+        Task<GetMediaItemsByTokenResponse> ByToken(string token, PaginationReq pagination, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Deletes the MediaItem data record and the folder/contents from the id.
         /// </summary>
         /// <param name="id">Id of the MediaItem to delete.</param>
         /// <param name="token">Token to proof you have the correct deletion rights.</param>
-        Task DeleteById(Guid id, string token);
+        Task DeleteById(Guid id, string token, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Modifies the MediaItem data record.
@@ -56,6 +56,6 @@ namespace Media.Abstractions.Interfaces
         /// <param name="id">Id of the MediaItem to modify.</param>
         /// <param name="token">Token to proof you have the correct deletion rights.</param>
         /// <param name="modifyMediaItemReq">new title and description</param>
-        Task ModifyById(Guid id, string token, ModifyMediaItemRequest modifyMediaItemReq);
+        Task ModifyById(Guid id, string token, ModifyMediaItemRequest modifyMediaItemReq, CancellationToken cancellationToken = default);
     }
 }

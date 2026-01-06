@@ -25,9 +25,9 @@ namespace Media.Presentation.Controllers
         [HttpGet]
         [Route("{id}/preview")]
         [ProducesResponseType(typeof(FileStream), StatusCodes.Status200OK)]
-        public async Task<FileStream> GetFileStreamPreview([FromRoute] Guid id)
+        public async Task<FileStream> GetFileStreamPreview([FromRoute] Guid id, CancellationToken cancellationToken = default)
         {
-            var mediaFile = await this._mediaItemService.GetMediaItemFileStreamPreview(id);
+            var mediaFile = await this._mediaItemService.GetMediaItemFileStreamPreview(id, cancellationToken);
             return mediaFile.FileStream;
         }
 
@@ -36,9 +36,9 @@ namespace Media.Presentation.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}/download")]
-        public async Task<FileStreamResult> GetFileStreamDownload([FromRoute] Guid id)
+        public async Task<FileStreamResult> GetFileStreamDownload([FromRoute] Guid id, CancellationToken cancellationToken = default)
         {
-            var mediaFile = await this._mediaItemService.GetMediaItemFileStreamDownload(id);
+            var mediaFile = await this._mediaItemService.GetMediaItemFileStreamDownload(id, cancellationToken);
             this.Response.Headers.Append("Content-Disposition", $"attachment; filename={mediaFile.FileName}");
             return this.File(mediaFile.FileStream, mediaFile.MimeType);
         }
@@ -48,9 +48,9 @@ namespace Media.Presentation.Controllers
         /// </summary>
         [HttpGet]
         [Route("{id}/info")]
-        public async Task<GetMediaItemInfoResponse> GetFileInfo([FromRoute] Guid id)
+        public async Task<GetMediaItemInfoResponse> GetFileInfo([FromRoute] Guid id, CancellationToken cancellationToken = default)
         {
-            var mediaFile = await this._mediaItemService.GetInfo(id);
+            var mediaFile = await this._mediaItemService.GetInfo(id, cancellationToken);
             return mediaFile;
         }
 
@@ -60,10 +60,10 @@ namespace Media.Presentation.Controllers
         [HttpPost]
         [Route("upload")]
         [TokenValid]
-        public async Task<UploadMediaItemResponse> UploadMediaItem([FromForm] UploadMediaItemRequest mediaItemReq)
+        public async Task<UploadMediaItemResponse> UploadMediaItem([FromForm] UploadMediaItemRequest mediaItemReq, CancellationToken cancellationToken = default)
         {
             string token = this.Request.Headers.Authorization.ToString();
-            return await this._mediaItemService.UploadMediaItem(mediaItemReq, token);
+            return await this._mediaItemService.UploadMediaItem(mediaItemReq, token, cancellationToken);
         }
 
         /// <summary>
@@ -72,10 +72,10 @@ namespace Media.Presentation.Controllers
         [HttpGet]
         [Route("items-by-tokens")]
         [TokenValid]
-        public async Task<GetMediaItemsByTokenResponse> GetItemsByToken([FromQuery] PaginationReq pagination)
+        public async Task<GetMediaItemsByTokenResponse> GetItemsByToken([FromQuery] PaginationReq pagination, CancellationToken cancellationToken = default)
         {
             string token = this.Request.Headers.Authorization.ToString();
-            return await this._mediaItemService.ByToken(token, pagination);
+            return await this._mediaItemService.ByToken(token, pagination, cancellationToken);
         }
 
         /// <summary>
@@ -84,10 +84,10 @@ namespace Media.Presentation.Controllers
         [HttpPut]
         [Route("{id}/modify")]
         [TokenValid]
-        public async Task<IActionResult> ModifyMediaItem([FromRoute] Guid id, [FromBody] ModifyMediaItemRequest modifyMediaItemReq)
+        public async Task<IActionResult> ModifyMediaItem([FromRoute] Guid id, [FromBody] ModifyMediaItemRequest modifyMediaItemReq, CancellationToken cancellationToken = default)
         {
             string token = this.Request.Headers.Authorization.ToString();
-            await this._mediaItemService.ModifyById(id, token, modifyMediaItemReq);
+            await this._mediaItemService.ModifyById(id, token, modifyMediaItemReq, cancellationToken);
             return this.Ok();
         }
 
@@ -97,10 +97,10 @@ namespace Media.Presentation.Controllers
         [HttpDelete]
         [Route("{id}/delete")]
         [TokenValid]
-        public async Task<IActionResult> DeleteMediaItem([FromRoute] Guid id)
+        public async Task<IActionResult> DeleteMediaItem([FromRoute] Guid id, CancellationToken cancellationToken = default)
         {
             string token = this.Request.Headers.Authorization.ToString();
-            await this._mediaItemService.DeleteById(id, token);
+            await this._mediaItemService.DeleteById(id, token, cancellationToken);
             return this.Ok();
         }
     }

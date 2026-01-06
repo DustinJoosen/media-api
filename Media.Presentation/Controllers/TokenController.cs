@@ -24,8 +24,8 @@ namespace Media.Presentation.Controllers
         /// <returns>Created token.</returns>
         [HttpPost]
         [Route("create-token")]
-        public async Task<CreateTokenResponse> CreateToken(CreateTokenRequest tokenReq) =>
-            await this._tokenService.CreateToken(tokenReq);
+        public async Task<CreateTokenResponse> CreateToken(CreateTokenRequest tokenReq, CancellationToken cancellationToken = default) =>
+            await this._tokenService.CreateToken(tokenReq, cancellationToken);
 
         /// <summary>
         /// Finds information about an authorization token; the Expiration date and whether the token is active.
@@ -34,10 +34,10 @@ namespace Media.Presentation.Controllers
         [HttpGet]
         [Route("info")]
         [TokenRequired]
-        public async Task<FindTokenInfoResponse> FindTokenInfo()
+        public async Task<FindTokenInfoResponse> FindTokenInfo(CancellationToken cancellationToken = default)
         {
             string token = this.Request.Headers.Authorization.ToString();
-            return await this._tokenService.FindTokenInfo(token);
+            return await this._tokenService.FindTokenInfo(token, cancellationToken);
         }
 
         /// <summary>
@@ -46,11 +46,11 @@ namespace Media.Presentation.Controllers
         [HttpPut]
         [Route("change-permissions")]
         [TokenRequired]
-        public async Task<IActionResult> ChangeTokenPermission(ChangeTokenPermissionRequest changeTokenPermissionReq)
+        public async Task<IActionResult> ChangeTokenPermission(ChangeTokenPermissionRequest changeTokenPermissionReq, CancellationToken cancellationToken = default)
         {
             string token = this.Request.Headers.Authorization.ToString();
 
-            await this._tokenService.ChangePermissions(changeTokenPermissionReq, token);
+            await this._tokenService.ChangePermissions(changeTokenPermissionReq, token, cancellationToken);
             return this.Ok($"Token '{changeTokenPermissionReq.Token}' has been given new permissions.");
         }
 
@@ -59,10 +59,10 @@ namespace Media.Presentation.Controllers
         /// </summary>
         [HttpDelete]
         [Route("deactivate-token")]
-        public async Task<OkObjectResult> DeactivateToken()
+        public async Task<OkObjectResult> DeactivateToken(CancellationToken cancellationToken = default)
         {
             string token = this.Request.Headers.Authorization.ToString();
-            await this._tokenService.DeactivateToken(token);
+            await this._tokenService.DeactivateToken(token, cancellationToken);
 
             return this.Ok($"Token '{token}' successfully deactivated.");
         }

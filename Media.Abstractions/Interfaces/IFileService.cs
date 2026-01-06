@@ -24,7 +24,7 @@ namespace Media.Abstractions.Interfaces
         /// </summary>
         /// <param name="id">Id to save the file as.</param>
         /// <param name="formFile">File to upload.</param>
-        Task UploadFile(Guid id, IFormFile formFile);
+        Task UploadFile(Guid id, IFormFile formFile, CancellationToken cancellationToken = default);
         
         /// <summary>
         /// Recursively deletes the folder of the given item.

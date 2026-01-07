@@ -2,7 +2,7 @@
 using Media.Core.Dtos.Exchange;
 using Media.Core.Exceptions;
 using Media.Infrastructure.Services;
-using Media.Test.Helpers;
+using Media.Test.Unit.Helpers;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Media.Test.Infrastructure.Services
+namespace Media.Test.Unit.Infrastructure.Services
 {
     [TestClass]
     public class ReleaseFileServiceTests : TestWithInMemoryDb
@@ -177,6 +177,35 @@ namespace Media.Test.Infrastructure.Services
             // Assert.
             Assert.IsFalse(Directory.Exists(folder));
         }
+
+        /// <summary>
+        /// This logic didn't work once. The file got deleted, but the folder didnt.
+        /// The test passed though. I assume this is a permissions-related quirk. 
+        /// If it happens again, firstly look at this test.
+        /// </summary>
+        [TestMethod]
+        public void DeleteFolder_ShouldRemoveFolderAndContents_WhenFolderHasFiles()
+        {
+            // Arrange.
+            var id = Guid.NewGuid();
+            var folder = Path.Combine(this._rootPath,
+                id.ToString().Replace("-", Path.DirectorySeparatorChar.ToString()));
+            Directory.CreateDirectory(folder);
+            var filePath = Path.Combine(folder, "test.txt");
+            File.WriteAllText(filePath, "Hello world");
+
+            // Early assert.
+            Assert.IsTrue(Directory.Exists(folder));
+            Assert.IsTrue(File.Exists(filePath));
+
+            // Act.
+            this._fileService.DeleteFolder(id);
+
+            // Assert.
+            Assert.IsFalse(File.Exists(filePath));
+            Assert.IsFalse(Directory.Exists(folder));
+        }
+
 
         /// <summary>
         /// DeleteFolder calls a seperate method that finds the full path. This method auto-creates

@@ -1,8 +1,9 @@
 ﻿using Media.Abstractions.Interfaces;
 using Media.Core.Exceptions;
+using Media.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 
-namespace Media.Infrastructure.Services
+namespace Media.Test.Unit.Helpers
 {
     public class TestingFileService : ReleaseFileService, IFileService
     {

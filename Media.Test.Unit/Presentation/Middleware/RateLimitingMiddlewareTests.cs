@@ -11,7 +11,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Media.Test.Presentation.Middleware
+namespace Media.Test.Unit.Presentation.Middleware
 {
     [TestClass]
     public class RateLimitingMiddlewareTests

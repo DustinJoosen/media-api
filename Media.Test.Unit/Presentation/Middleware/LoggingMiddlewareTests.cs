@@ -1,5 +1,5 @@
 ﻿using Media.Presentation.Middleware;
-using Media.Test.Helpers;
+using Media.Test.Unit.Helpers;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Media.Test.Presentation.Middleware
+namespace Media.Test.Unit.Presentation.Middleware
 {
     [TestClass]
     public class LoggingMiddlewareTests

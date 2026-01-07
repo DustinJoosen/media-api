@@ -11,7 +11,7 @@ using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("Media.Test")]
+[assembly: InternalsVisibleTo("Media.Test.Unit")]
 namespace Media.Infrastructure.Services
 {
     public class MediaItemService : IMediaItemService

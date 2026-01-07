@@ -1,6 +1,6 @@
 ﻿using Media.Core.Exceptions;
 using Media.Presentation.Middleware;
-using Media.Test.Helpers;
+using Media.Test.Unit.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Media.Test.Presentation.Middleware
+namespace Media.Test.Unit.Presentation.Middleware
 {
 
     [TestClass]

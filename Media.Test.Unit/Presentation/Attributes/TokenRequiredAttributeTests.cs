@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Routing;
 using Media.Presentation.Attributes;
 using Media.Core.Exceptions;
 
-namespace Media.Test.Presentation.Attributes
+namespace Media.Test.Unit.Presentation.Attributes
 {
     [TestClass]
     public class TokenRequiredAttributeTests

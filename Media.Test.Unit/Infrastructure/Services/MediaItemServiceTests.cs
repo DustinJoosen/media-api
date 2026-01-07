@@ -6,7 +6,7 @@ using Media.Core.Exceptions;
 using Media.Core.Options;
 using Media.Infrastructure.Services;
 using Media.Persistence;
-using Media.Test.Helpers;
+using Media.Test.Unit.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -16,7 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Media.Test.Infrastructure.Services
+namespace Media.Test.Unit.Infrastructure.Services
 {
     [TestClass]
     public class MediaItemServiceTests : TestWithInMemoryDb

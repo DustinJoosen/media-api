@@ -17,4 +17,4 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("05f91a3e-01b3-4d5a-b38a-c66ad59884f0")]
 
-[assembly: InternalsVisibleTo("Media.Test")]
+[assembly: InternalsVisibleTo("Media.Test.Unit")]

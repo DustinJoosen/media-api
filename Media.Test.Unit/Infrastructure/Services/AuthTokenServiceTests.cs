@@ -5,7 +5,7 @@ using Media.Core.Entities;
 using Media.Core.Exceptions;
 using Media.Infrastructure.Services;
 using Media.Persistence;
-using Media.Test.Helpers;
+using Media.Test.Unit.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Media.Test.Infrastructure.Services
+namespace Media.Test.Unit.Infrastructure.Services
 {
     [TestClass]
     public class AuthTokenServiceTests : TestWithInMemoryDb

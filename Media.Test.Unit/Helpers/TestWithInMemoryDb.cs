@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Media.Test.Helpers
+namespace Media.Test.Unit.Helpers
 {
     [TestClass]
     public class TestWithInMemoryDb

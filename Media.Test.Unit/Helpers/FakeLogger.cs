@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Media.Test.Helpers
+namespace Media.Test.Unit.Helpers
 {
     public class FakeLogger<T> : ILogger<T>
     {

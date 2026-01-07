@@ -18,7 +18,7 @@ using Media.Presentation.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
 
-namespace Media.Test.Presentation.Attributes
+namespace Media.Test.Unit.Presentation.Attributes
 {
     [TestClass]
     public class TokenValidAttributeTests

@@ -2,7 +2,7 @@
 using Media.Core.Dtos.Exchange;
 using Media.Core.Exceptions;
 using Media.Infrastructure.Services;
-using Media.Test.Unit.Helpers;
+using Media.Test.Core.Helpers;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;

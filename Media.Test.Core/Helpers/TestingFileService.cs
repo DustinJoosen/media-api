@@ -3,7 +3,7 @@ using Media.Core.Exceptions;
 using Media.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 
-namespace Media.Test.Unit.Helpers
+namespace Media.Test.Core.Helpers
 {
     public class TestingFileService : ReleaseFileService, IFileService
     {

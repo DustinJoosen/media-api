@@ -17,6 +17,7 @@ using Media.Core.Exceptions;
 using Media.Presentation.Attributes;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http;
+using Media.Core.Entities;
 
 namespace Media.Test.Unit.Presentation.Attributes
 {
@@ -36,26 +37,26 @@ namespace Media.Test.Unit.Presentation.Attributes
             this._context = new MediaDbContext(options);
             this._service = new AuthTokenService(this._context);
 
-            this._context.AuthTokens.Add(new Core.Entities.AuthToken
+            this._context.AuthTokens.Add(new AuthToken
             {
                 Name = "Testing Auth Token Valid",
                 Token = "VALID_TOKEN",
-                Permissions = (Core.Entities.AuthTokenPermissions)31,
+                Permissions = (AuthTokenPermissions)31,
                 IsActive = true
             });
-            this._context.AuthTokens.Add(new Core.Entities.AuthToken
+            this._context.AuthTokens.Add(new AuthToken
             {
                 Name = "Testing Auth Token Expired",
                 Token = "EXPIRED_TOKEN",
-                Permissions = (Core.Entities.AuthTokenPermissions)31,
+                Permissions = (AuthTokenPermissions)31,
                 IsActive = true,
                 ExpiresAt = DateTime.Now.AddDays(-31)
             });
-            this._context.AuthTokens.Add(new Core.Entities.AuthToken
+            this._context.AuthTokens.Add(new AuthToken
             {
                 Name = "Testing Auth Token Inactive",
                 Token = "INACTIVE_TOKEN",
-                Permissions = (Core.Entities.AuthTokenPermissions)31,
+                Permissions = (AuthTokenPermissions)31,
                 IsActive = false
             });
             this._context.SaveChanges();

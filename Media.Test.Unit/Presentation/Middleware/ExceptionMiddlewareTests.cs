@@ -1,6 +1,6 @@
 ﻿using Media.Core.Exceptions;
 using Media.Presentation.Middleware;
-using Media.Test.Unit.Helpers;
+using Media.Test.Core.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;

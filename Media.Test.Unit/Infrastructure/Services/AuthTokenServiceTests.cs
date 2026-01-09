@@ -5,7 +5,7 @@ using Media.Core.Entities;
 using Media.Core.Exceptions;
 using Media.Infrastructure.Services;
 using Media.Persistence;
-using Media.Test.Unit.Helpers;
+using Media.Test.Core.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

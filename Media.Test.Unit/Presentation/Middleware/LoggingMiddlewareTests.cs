@@ -1,5 +1,5 @@
 ﻿using Media.Presentation.Middleware;
-using Media.Test.Unit.Helpers;
+using Media.Test.Core.Helpers;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;

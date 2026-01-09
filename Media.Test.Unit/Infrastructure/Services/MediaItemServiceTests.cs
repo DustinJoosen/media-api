@@ -6,7 +6,7 @@ using Media.Core.Exceptions;
 using Media.Core.Options;
 using Media.Infrastructure.Services;
 using Media.Persistence;
-using Media.Test.Unit.Helpers;
+using Media.Test.Core.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;

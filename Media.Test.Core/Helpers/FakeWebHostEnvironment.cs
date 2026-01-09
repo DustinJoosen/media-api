@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Media.Test.Unit.Helpers
+namespace Media.Test.Core.Helpers
 {
     public class FakeWebHostEnvironment : IWebHostEnvironment
     {

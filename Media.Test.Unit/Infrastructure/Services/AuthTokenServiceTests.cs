@@ -1,17 +1,10 @@
-﻿using Azure.Core;
-using Media.Abstractions.Interfaces;
+﻿using Media.Abstractions.Interfaces;
 using Media.Core.Dtos.Exchange;
 using Media.Core.Entities;
 using Media.Core.Exceptions;
 using Media.Infrastructure.Services;
-using Media.Persistence;
 using Media.Test.Core.Helpers;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Media.Test.Unit.Infrastructure.Services
 {
@@ -61,7 +54,6 @@ namespace Media.Test.Unit.Infrastructure.Services
             Assert.AreEqual("Token name 'MyDupe' is already used.", ex.Message);
         }
 
-
         [TestMethod]
         public async Task FindTokenInfo_ShouldGiveTokenInfo_WhenValidData()
         {
@@ -76,7 +68,6 @@ namespace Media.Test.Unit.Infrastructure.Services
             Assert.IsTrue(info.IsActive);
             Assert.AreEqual("InfoToken", info.Name);
         }
-
 
         [TestMethod]
         public async Task FindTokenInfo_ShouldThrowNotFoundException_WhenInvalidToken()

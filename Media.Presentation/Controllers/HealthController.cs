@@ -43,14 +43,12 @@ namespace Media.Presentation.Controllers
                 Dependencies: dependencies);
         }
 
-
         /// <summary>
         /// Get the runtime information.
         /// </summary>
         /// <returns>All information about the runtime.</returns>
         private RuntimeResponse GetRuntimeInformation()
         {
-
             // Environment and configuration.
             var environment = this._env.EnvironmentName;
 
@@ -66,7 +64,6 @@ namespace Media.Presentation.Controllers
 
             var uptimeSpan = DateTime.Now - AppRunningTime;
             var uptime = $"{(int)uptimeSpan.TotalHours}h {uptimeSpan.Minutes}m {uptimeSpan.Seconds}s";
-
 
             return new RuntimeResponse(environment, build, startTime, uptime, timestamp);
         }
@@ -87,6 +84,5 @@ namespace Media.Presentation.Controllers
                 return new DependenciesResponse(Database: "Down");
             }
         }
-
     }
 }

@@ -6,7 +6,6 @@ using Media.Core.Options;
 using Media.Presentation.Controllers;
 using Serilog;
 using Serilog.Events;
-using Microsoft.AspNetCore.Http.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 

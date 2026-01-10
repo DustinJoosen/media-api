@@ -52,4 +52,3 @@ namespace Media.Core.Dtos.Exchange
     /// <param name="Description">Optional new description.</param>
     public record ModifyMediaItemRequest(string? Title, string? Description);
 }
-

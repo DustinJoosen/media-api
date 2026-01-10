@@ -49,8 +49,8 @@ namespace Media.Presentation.Controllers
         public async Task<IActionResult> ChangeTokenPermission(ChangeTokenPermissionRequest changeTokenPermissionReq, CancellationToken cancellationToken = default)
         {
             string token = this.Request.Headers.Authorization.ToString();
-
             await this._tokenService.ChangePermissions(changeTokenPermissionReq, token, cancellationToken);
+            
             return this.Ok($"Token '{changeTokenPermissionReq.Token}' has been given new permissions.");
         }
 

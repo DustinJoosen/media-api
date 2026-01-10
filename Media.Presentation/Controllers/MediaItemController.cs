@@ -1,5 +1,4 @@
 ﻿using Media.Abstractions.Interfaces;
-using Media.Core.Dtos;
 using Media.Core.Dtos.Exchange;
 using Media.Presentation.Attributes;
 using Microsoft.AspNetCore.Mvc;

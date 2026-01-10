@@ -75,5 +75,4 @@ namespace Media.Presentation.Middleware
             return context.Response.WriteAsJsonAsync(response);
         }
     }
-
 }

@@ -1,6 +1,5 @@
 ﻿namespace Media.Core.Dtos.Exchange
 {
-
     /// <summary>
     /// Output for a health checkup.
     /// </summary>

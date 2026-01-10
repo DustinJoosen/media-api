@@ -8,7 +8,6 @@ namespace Media.Presentation.SwaggerGen
     /// </summary>
     public static class SwaggerGenConfig
     {
-
         /// <summary>
         /// Add configuration for the swagger interface.
         /// </summary>

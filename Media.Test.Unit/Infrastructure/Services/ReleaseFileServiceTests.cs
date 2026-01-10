@@ -1,14 +1,8 @@
 ﻿using Media.Abstractions.Interfaces;
-using Media.Core.Dtos.Exchange;
 using Media.Core.Exceptions;
-using Media.Infrastructure.Services;
 using Media.Test.Core.Helpers;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Media.Test.Unit.Infrastructure.Services
 {
@@ -108,7 +102,6 @@ namespace Media.Test.Unit.Infrastructure.Services
             }
         }
 
-
         [TestMethod]
         public void GetFileStreamPreview_ShouldReturnNotFoundImage_WhenFileIsNotPreviewable()
         {
@@ -206,7 +199,6 @@ namespace Media.Test.Unit.Infrastructure.Services
             Assert.IsFalse(Directory.Exists(folder));
         }
 
-
         /// <summary>
         /// DeleteFolder calls a seperate method that finds the full path. This method auto-creates
         /// the folder, so it should always exist, even if the folder did not exist beforehand.
@@ -226,8 +218,6 @@ namespace Media.Test.Unit.Infrastructure.Services
             // Assert.
             Assert.IsFalse(Directory.Exists(folder));
         }
-
-
 
         private IFormFile CreateFakeFormFile(string fileName = "test.jpg")
         {

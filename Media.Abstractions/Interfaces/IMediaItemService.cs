@@ -1,5 +1,4 @@
-﻿using Media.Core.Dtos;
-using Media.Core.Dtos.Exchange;
+﻿using Media.Core.Dtos.Exchange;
 
 namespace Media.Abstractions.Interfaces
 {
@@ -33,7 +32,6 @@ namespace Media.Abstractions.Interfaces
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Meta info of the MediaItem.</returns>
         Task<GetMediaItemInfoResponse> GetInfo(Guid id, CancellationToken cancellationToken = default);
-
 
         /// <summary>
         /// Gets all media items created by the given token.

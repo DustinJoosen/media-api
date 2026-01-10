@@ -9,7 +9,6 @@ using Media.Persistence;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("Media.Test.Unit")]
@@ -88,7 +87,6 @@ namespace Media.Infrastructure.Services
 
             return this._fileService.GetFileStreamPreview(id);
         }
-
 
         /// <summary>
         /// Gets the download filestream. If it can't be previewed it will return notfound.png

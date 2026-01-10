@@ -1,5 +1,4 @@
 ﻿using Media.Abstractions.Interfaces;
-using Media.Core.Exceptions;
 using Media.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 

@@ -3,18 +3,11 @@ using Media.Presentation.Middleware;
 using Media.Test.Core.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Media.Test.Unit.Presentation.Middleware
 {
-
     [TestClass]
     public class ExceptionMiddlewareTests
     {
@@ -26,7 +19,6 @@ namespace Media.Test.Unit.Presentation.Middleware
             this._env = new FakeWebHostEnvironment();
             this._logger = NullLogger<ExceptionMiddleware>.Instance;
         }
-
 
         [TestMethod]
         public async Task HandleExceptionAsync_WritesStatus400BadRequest_WhenBadRequestException()
@@ -139,7 +131,5 @@ namespace Media.Test.Unit.Presentation.Middleware
             // Assert.
             Assert.AreEqual(500, context.Response.StatusCode);
         }
-
-
     }
 }

@@ -6,17 +6,10 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
 using Media.Core.Exceptions;
 using Media.Presentation.Attributes;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http;
 using Media.Core.Entities;
 
 namespace Media.Test.Unit.Presentation.Attributes
@@ -123,7 +116,6 @@ namespace Media.Test.Unit.Presentation.Attributes
             // Assert.
             Assert.AreEqual("Cannot use this token. Token is deactivated.", ex.Message);
         }
-
         
         [TestMethod]
         public async Task OnAuthorizationAsync_ThrowsUnauthorizedException_WhenTokenIsExpired()
@@ -141,6 +133,5 @@ namespace Media.Test.Unit.Presentation.Attributes
             // Assert.
             Assert.AreEqual("Cannot use this token. Token is expired.", ex.Message);
         }
-
     }
 }

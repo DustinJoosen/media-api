@@ -1,15 +1,11 @@
 ﻿using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using Media.Abstractions.Interfaces;
 using Media.Core.Dtos.Exchange;
 using Media.Core.Entities;
 using Media.Persistence;
-using Media.Presentation;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Media.Test.Integration.Presentation.Controllers
 {

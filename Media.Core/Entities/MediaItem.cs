@@ -18,5 +18,4 @@ namespace Media.Core.Entities
         [StringLength(512)]
         public string? Description { get; set; }
     }
-
 }

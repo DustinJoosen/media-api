@@ -1,18 +1,12 @@
 ﻿using Media.Presentation.Middleware;
 using Media.Test.Core.Helpers;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Media.Test.Unit.Presentation.Middleware
 {
     [TestClass]
     public class LoggingMiddlewareTests
     {
-
         [TestMethod]
         public async Task InvokeAsync_Logs_IfHappyPath()
         {

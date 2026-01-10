@@ -1,5 +1,4 @@
-﻿using Media.Core.Dtos;
-using Media.Core.Dtos.Exchange;
+﻿using Media.Core.Dtos.Exchange;
 using Media.Core.Entities;
 
 namespace Media.Abstractions.Interfaces

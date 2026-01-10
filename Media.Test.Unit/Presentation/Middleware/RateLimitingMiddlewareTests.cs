@@ -4,12 +4,7 @@ using Media.Presentation.Middleware;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Media.Test.Unit.Presentation.Middleware
 {
@@ -55,7 +50,6 @@ namespace Media.Test.Unit.Presentation.Middleware
             Assert.AreEqual(0, ex?.Remaining);
             Assert.AreEqual(1, ex?.Limit);
         }
-
 
         [TestMethod]
         public async Task InvokeAsync_CounterResetAndCallsNext_ResetsCounter()

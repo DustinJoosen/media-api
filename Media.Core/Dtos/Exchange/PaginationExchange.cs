@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Media.Core.Dtos.Exchange
+﻿namespace Media.Core.Dtos.Exchange
 {
-
     /// <summary>
     /// Input for pagination objects.
     /// </summary>

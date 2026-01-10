@@ -2,11 +2,6 @@
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
 using Media.Presentation.Attributes;
 using Media.Core.Exceptions;
@@ -16,7 +11,6 @@ namespace Media.Test.Unit.Presentation.Attributes
     [TestClass]
     public class TokenRequiredAttributeTests
     {
-
         private static AuthorizationFilterContext CreateAuthorizationContext(string? authHeader = null)
         {
             var context = new DefaultHttpContext();

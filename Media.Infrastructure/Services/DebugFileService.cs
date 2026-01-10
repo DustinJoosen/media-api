@@ -4,7 +4,6 @@ namespace Media.Infrastructure.Services
 {
     public class DebugFileService : ReleaseFileService, IFileService
     {
-
         /// <summary>
         /// Returns the Windows folder where the files are saved.
         /// </summary>

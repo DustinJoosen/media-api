@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Media.Core.Exceptions
+﻿namespace Media.Core.Exceptions
 {
     public abstract class CustomException : Exception
     {
@@ -13,6 +7,10 @@ namespace Media.Core.Exceptions
             
         }
 
+        /// <summary>
+        /// Allow custom exceptions to set some extra headers. These headers automatically
+        /// get added to any response the ExceptionMiddleware writes.
+        /// </summary>
         public virtual Dictionary<string, string> GetHeaders()
         {
             return [];

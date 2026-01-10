@@ -1,20 +1,13 @@
-﻿using Azure.Core;
-using Media.Abstractions.Interfaces;
-using Media.Core.Dtos.Exchange;
+﻿using Media.Core.Dtos.Exchange;
 using Media.Core.Entities;
 using Media.Core.Exceptions;
 using Media.Core.Options;
 using Media.Infrastructure.Services;
-using Media.Persistence;
 using Media.Test.Core.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Media.Test.Unit.Infrastructure.Services
 {
@@ -62,7 +55,6 @@ namespace Media.Test.Unit.Infrastructure.Services
             Assert.IsNotNull(mediaItem);
             Assert.AreEqual(this._testingToken, mediaItem.CreatedByToken);
         }
-
         
         [TestMethod]
         public async Task UploadMediaItem_ShouldThrowUnauthorizedException_WhenTokenLacksPermission()
@@ -103,7 +95,6 @@ namespace Media.Test.Unit.Infrastructure.Services
             Assert.AreEqual(0, await this._context.MediaItems.CountAsync());
             Assert.AreEqual("Could not upload the file on the testing file service.", ex.Message);
         }
-
 
         [TestMethod]
         public async Task GetMediaItemFileStreamPreview_ShouldReturnFile_WhenMediaItemExists()
@@ -257,7 +248,6 @@ namespace Media.Test.Unit.Infrastructure.Services
             Assert.IsFalse(exists);
         }
 
-
         [TestMethod]
         public async Task DeleteById_ShouldThrowNotFoundException_WhenItemMissing()
         {
@@ -388,7 +378,6 @@ namespace Media.Test.Unit.Infrastructure.Services
 
             Assert.AreEqual("Cannot modify this media item. The provided token does not own this media item.", ex.Message);
         }
-
 
         [TestMethod]
         public void CheckFormFileValid_ShouldPass_ForValidFile()

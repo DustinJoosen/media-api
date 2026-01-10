@@ -1,15 +1,8 @@
 ﻿using Media.Core.Dtos.Exchange;
 using Media.Presentation.Controllers;
 using Microsoft.AspNetCore.Mvc.Testing;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
 using System.Net;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Media.Presentation;
 
 namespace Media.Test.Integration.Presentation.Controllers
 {
@@ -53,6 +46,5 @@ namespace Media.Test.Integration.Presentation.Controllers
             Assert.IsNotNull(health.Runtime);
             Assert.IsNotNull(health.Dependencies);
         }
-
     }
 }

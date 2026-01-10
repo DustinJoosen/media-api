@@ -1,10 +1,6 @@
 ﻿namespace Media.Core.Exceptions
 {
-    public class UnauthorizedException : CustomException
+    public class UnauthorizedException(string message) : CustomException(message)
     {
-        public UnauthorizedException(string message) : base(message)
-        {
-            
-        }
-    }
+	}
 }

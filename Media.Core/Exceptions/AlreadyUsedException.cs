@@ -1,10 +1,6 @@
 ﻿namespace Media.Core.Exceptions
 {
-    public class AlreadyUsedException : CustomException
+    public class AlreadyUsedException(string message) : CustomException(message)
     {
-        public AlreadyUsedException(string message) : base(message)
-        {
-            
-        }
-    }
+	}
 }

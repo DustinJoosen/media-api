@@ -1,10 +1,6 @@
 ﻿namespace Media.Core.Exceptions
 {
-    public class DatabaseOperationException : CustomException
+    public class DatabaseOperationException(string message) : CustomException(message)
     {
-        public DatabaseOperationException(string message) : base(message)
-        {
-            
-        }
-    }
+	}
 }

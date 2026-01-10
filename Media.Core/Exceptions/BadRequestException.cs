@@ -1,10 +1,6 @@
 ﻿namespace Media.Core.Exceptions
 {
-    public class BadRequestException : CustomException
+    public class BadRequestException(string message) : CustomException(message)
     {
-        public BadRequestException(string message) : base(message)
-        {
-            
-        }
-    }
+	}
 }

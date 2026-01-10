@@ -1,10 +1,6 @@
 ﻿namespace Media.Core.Exceptions
 {
-    public class NotFoundException : CustomException
+    public class NotFoundException(string message) : CustomException(message)
     {
-        public NotFoundException(string message) : base(message)
-        {
-            
-        }
-    }
+	}
 }

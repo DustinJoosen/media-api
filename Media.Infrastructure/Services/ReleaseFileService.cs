@@ -1,4 +1,5 @@
 ﻿using Media.Abstractions.Interfaces;
+using Media.Core;
 using Media.Core.Dtos.Exchange;
 using Media.Core.Exceptions;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +15,7 @@ namespace Media.Infrastructure.Services
         public virtual async Task UploadFile(Guid id, IFormFile formFile, CancellationToken cancellationToken = default)
         {
             if (formFile == null || formFile.Length == 0)
-                throw new BadRequestException("Uploaded file is null or has a length of 0");
+                throw new BadRequestException(ErrorMessages.FileNullOrEmpty());
 
             var guidFolder = this.GetFullGuidFolder(id);
             var filePath = Path.Combine(guidFolder, Path.GetFileName(formFile.FileName));
@@ -26,7 +27,7 @@ namespace Media.Infrastructure.Services
             }
             catch
             {
-                throw new BadRequestException($"Access to the file path is denied");
+                throw new BadRequestException(ErrorMessages.AccessToFileDenied());
             }
         }
 
@@ -42,7 +43,7 @@ namespace Media.Infrastructure.Services
 
             // Prevent path traversal security attacks.
             if (!filePath.StartsWith(rootFolder, StringComparison.OrdinalIgnoreCase))
-                throw new UnauthorizedAccessException("Access to the specified file is not allowed.");
+                throw new UnauthorizedAccessException(ErrorMessages.AccessToFileDenied());
 
             if (!this.CanPreview(filePath))
                 filePath = Path.Combine(rootFolder, "notfound.png");
@@ -73,7 +74,7 @@ namespace Media.Infrastructure.Services
             var guidFolder = this.GetFullGuidFolder(id);
 
             if (!Directory.Exists(guidFolder))
-                throw new NotFoundException("File could not be deleted, it does not exist");
+                throw new NotFoundException(ErrorMessages.FileNotFound());
 
             Directory.Delete(guidFolder, recursive: true);
         }

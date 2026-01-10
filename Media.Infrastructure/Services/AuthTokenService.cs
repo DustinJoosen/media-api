@@ -1,4 +1,5 @@
 ﻿using Media.Abstractions.Interfaces;
+using Media.Core;
 using Media.Core.Dtos.Exchange;
 using Media.Core.Entities;
 using Media.Core.Exceptions;
@@ -23,8 +24,8 @@ namespace Media.Infrastructure.Services
         /// <returns>Created token.</returns>
         public async virtual Task<CreateTokenResponse> CreateToken(CreateTokenRequest tokenReq, CancellationToken cancellationToken = default)
         {
-            if (await this.IsNameUsed(tokenReq.Name))
-                throw new AlreadyUsedException($"Token name '{tokenReq.Name}' is already being used");
+            if (await this.IsNameUsed(tokenReq.Name, cancellationToken))
+                throw new AlreadyUsedException(ErrorMessages.TokenNameAlreadyUsed(tokenReq.Name));
 
             var token = this.GenerateSecureToken();
 
@@ -50,7 +51,7 @@ namespace Media.Infrastructure.Services
         {
             var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token, cancellationToken);
             if (authToken == null)
-                throw new NotFoundException($"Token '{token}' does not exist");
+                throw new NotFoundException(ErrorMessages.TokenDoesNotExist(token));
 
             return new(authToken.Name, authToken.ExpiresAt, authToken.IsActive, authToken.Permissions);
         }
@@ -64,7 +65,7 @@ namespace Media.Infrastructure.Services
         {
             var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token, cancellationToken);
             if (authToken == null)
-                throw new NotFoundException($"Token '{token}' does not exist");
+                throw new NotFoundException(ErrorMessages.TokenDoesNotExist(token));
 
             try
             {
@@ -74,7 +75,7 @@ namespace Media.Infrastructure.Services
             } 
             catch
             {
-                throw new DatabaseOperationException($"Could not deactivate token");
+                throw new DatabaseOperationException(ErrorMessages.CannotDeactivateToken(token));
             }
         }
 
@@ -87,7 +88,7 @@ namespace Media.Infrastructure.Services
         {
             var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token, cancellationToken);
             if (authToken == null)
-                throw new NotFoundException($"Token '{token}' does not exist");
+                throw new NotFoundException(ErrorMessages.TokenDoesNotExist(token));
 
             return authToken.Permissions;
         }
@@ -102,12 +103,12 @@ namespace Media.Infrastructure.Services
             // Check that you're allowed to change the permissions.
             var roles = await this.GetRoles(token);
             if (!roles.HasFlag(AuthTokenPermissions.CanManagePermissions))
-                throw new UnauthorizedException("Provided token does not have the needed permissions.");
+                throw new UnauthorizedException(ErrorMessages.TokenDoesNotHavePermissions());
 
             // Find and check the existence of the token.
             var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == changeTokenPermissionReq.Token, cancellationToken);
             if (authToken == null)
-                throw new NotFoundException($"Token '{changeTokenPermissionReq.Token}' does not exist");
+                throw new NotFoundException(ErrorMessages.TokenDoesNotExist(changeTokenPermissionReq.Token));
 
             // Update the new permission.
             try
@@ -118,7 +119,7 @@ namespace Media.Infrastructure.Services
             }
             catch
             {
-                throw new DatabaseOperationException($"Could not update token permissions");
+                throw new DatabaseOperationException(ErrorMessages.CannotUpdateTokenPermissions());
             }
         }
 

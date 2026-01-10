@@ -58,7 +58,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             });
 
             // Assert.
-            Assert.AreEqual("Token name 'MyDupe' is already being used", ex.Message);
+            Assert.AreEqual("Token name 'MyDupe' is already used.", ex.Message);
         }
 
 
@@ -90,7 +90,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             });
 
             // Assert.
-            Assert.AreEqual("Token 'InvalidToken' does not exist", ex.Message);
+            Assert.AreEqual("Token 'InvalidToken' does not exist.", ex.Message);
         }
 
         [TestMethod]
@@ -120,7 +120,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             });
 
             // Assert.
-            Assert.AreEqual("Token 'InvalidToken' does not exist", ex.Message);
+            Assert.AreEqual("Token 'InvalidToken' does not exist.", ex.Message);
         }
 
         [TestMethod]
@@ -149,7 +149,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             });
 
             // Assert.
-            Assert.AreEqual("Token 'InvalidToken' does not exist", ex.Message);
+            Assert.AreEqual("Token 'InvalidToken' does not exist.", ex.Message);
         }
 
         [TestMethod]
@@ -196,7 +196,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             });
 
             // Assert.
-            Assert.AreEqual("Provided token does not have the needed permissions.", ex.Message);
+            Assert.AreEqual("The provided token does not have the required permissions.", ex.Message);
         }
 
         [TestMethod]
@@ -220,7 +220,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             });
 
             // Assert.
-            Assert.AreEqual("Token 'FakeToken' does not exist", ex.Message);
+            Assert.AreEqual("Token 'FakeToken' does not exist.", ex.Message);
         }
     }
 }

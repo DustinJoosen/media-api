@@ -11,7 +11,6 @@ The API supports **most file types**, including:
 - ZIP files  
 - Any other files you want to host online  
 
-(anything but .exe)
 ---
 
 ## Architecture

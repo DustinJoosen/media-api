@@ -1,4 +1,5 @@
 ﻿using Media.Abstractions.Interfaces;
+using Media.Core;
 using Media.Core.Exceptions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -18,7 +19,7 @@ namespace Media.Presentation.Attributes
         {
             var token = context.HttpContext.Request.Headers.Authorization.ToString();
             if (string.IsNullOrEmpty(token))
-                throw new UnauthorizedException("Didn't provide an authorization token in header.");
+                throw new UnauthorizedException(ErrorMessages.NoAuthTokenInHeader());
         }
     }
 }

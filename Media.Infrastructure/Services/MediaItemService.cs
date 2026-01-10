@@ -1,4 +1,5 @@
 ﻿using Media.Abstractions.Interfaces;
+using Media.Core;
 using Media.Core.Dtos;
 using Media.Core.Dtos.Exchange;
 using Media.Core.Entities;
@@ -42,7 +43,7 @@ namespace Media.Infrastructure.Services
 
             var tokenInfo = await this._tokenService.FindTokenInfo(token, cancellationToken);
             if (!tokenInfo.Permissions.HasFlag(AuthTokenPermissions.CanCreate))
-                throw new UnauthorizedException("Could not upload this media item. Provided token does not have the CanCreate permission.");
+                throw new UnauthorizedException(ErrorMessages.CouldNotActionMediaMissingPermission("upload", "CanCreate"));
 
             var mediaItem = new MediaItem
             {
@@ -83,7 +84,7 @@ namespace Media.Infrastructure.Services
         {
             var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id, cancellationToken);
             if (item == null)
-                throw new NotFoundException("Media Item is not found");
+                throw new NotFoundException(ErrorMessages.MediaItemNotFound());
 
             return this._fileService.GetFileStreamPreview(id);
         }
@@ -98,7 +99,7 @@ namespace Media.Infrastructure.Services
         {
             var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id, cancellationToken);
             if (item == null)
-                throw new NotFoundException("Media Item is not found");
+                throw new NotFoundException(ErrorMessages.MediaItemNotFound());
 
             return this._fileService.GetFileStreamDownload(id);
         }
@@ -112,7 +113,7 @@ namespace Media.Infrastructure.Services
         {
             var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id, cancellationToken);
             if (item == null)
-                throw new NotFoundException("Media Item is not found");
+                throw new NotFoundException(ErrorMessages.MediaItemNotFound());
 
             return new GetMediaItemInfoResponse(item.CreatedByToken, item.Title, item.Description);
         }
@@ -162,14 +163,14 @@ namespace Media.Infrastructure.Services
             // Validation.
             var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id, cancellationToken);
             if (item == null)
-                throw new NotFoundException("Media Item is not found");
+                throw new NotFoundException(ErrorMessages.MediaItemNotFound());
 
             var tokenInfo = await this._tokenService.FindTokenInfo(token, cancellationToken);
             if (!tokenInfo.Permissions.HasFlag(AuthTokenPermissions.CanDelete))
-                throw new UnauthorizedException("Could not delete this media item. Provided token does not have the CanDelete permission.");
+                throw new UnauthorizedException(ErrorMessages.CouldNotActionMediaMissingPermission("delete", "CanDelete"));
 
             if (item.CreatedByToken != token)
-                throw new UnauthorizedException("Could not delete this media item. Provided token does not own media item.");
+                throw new UnauthorizedException(ErrorMessages.CouldNotActionMediaUserIsNotOwner("delete"));
 
             using var transaction = await this._context.Database.BeginTransactionAsync(cancellationToken);
 
@@ -200,14 +201,14 @@ namespace Media.Infrastructure.Services
             // Validation.
             var item = await this._context.MediaItems.SingleOrDefaultAsync(mediaItem => mediaItem.Id == id, cancellationToken);
             if (item == null)
-                throw new NotFoundException("Media Item is not found");
+                throw new NotFoundException(ErrorMessages.MediaItemNotFound());
 
             var tokenInfo = await this._tokenService.FindTokenInfo(token, cancellationToken);
             if (!tokenInfo.Permissions.HasFlag(AuthTokenPermissions.CanModify))
-                throw new UnauthorizedException("Could not modify this media item. Provided token does not have the CanModify permission.");
+                throw new UnauthorizedException(ErrorMessages.CouldNotActionMediaMissingPermission("modify", "CanModify"));
 
             if (item.CreatedByToken != token)
-                throw new UnauthorizedException("Could not modify this media item. Provided token does not own media item.");
+                throw new UnauthorizedException(ErrorMessages.CouldNotActionMediaUserIsNotOwner("modify"));
 
             // Update the media items. Note: they can be set to null
             item.Title = modifyMediaItemReq.Title;
@@ -226,11 +227,11 @@ namespace Media.Infrastructure.Services
         internal void CheckFormFileValid(IFormFile formFile)
         {
             if (formFile.Length > this._options.MaxFileSize)
-                throw new BadRequestException($"File is too large. Limit is {this._options.MaxFileSize} bytes.");
+                throw new BadRequestException(ErrorMessages.FileTooLarge(this._options.MaxFileSize));
 
             var extension = Path.GetExtension(formFile.FileName);
             if (this._options.BlockedFileExtensions.Any(be => be.Equals(extension, StringComparison.OrdinalIgnoreCase)))
-                throw new BadRequestException($"Files of type '{extension}' are not allowed.");
+                throw new BadRequestException(ErrorMessages.FileExtensionNotAllowed(extension));
         }
     }
 }

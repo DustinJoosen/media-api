@@ -83,7 +83,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             });
 
             // Assert.
-            Assert.AreEqual("Could not upload this media item. Provided token does not have the CanCreate permission.", ex.Message);
+            Assert.AreEqual("Cannot upload this media item. The provided token lacks the CanCreate permission.", ex.Message);
         }
 
         [TestMethod]
@@ -135,7 +135,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
 
             // Assert.
-            Assert.AreEqual("Media Item is not found", ex.Message);
+            Assert.AreEqual("Media item not found.", ex.Message);
         }
 
         [TestMethod]
@@ -168,7 +168,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
 
             // Assert.
-            Assert.AreEqual("Media Item is not found", ex.Message);
+            Assert.AreEqual("Media item not found.", ex.Message);
         }
 
         [TestMethod]
@@ -207,7 +207,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
             
             // Assert.
-            Assert.AreEqual("Media Item is not found", ex.Message);
+            Assert.AreEqual("Media item not found.", ex.Message);
         }
 
         [TestMethod]
@@ -269,7 +269,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
 
             // Assert.
-            Assert.AreEqual("Media Item is not found", ex.Message);
+            Assert.AreEqual("Media item not found.", ex.Message);
         }
 
         [TestMethod]
@@ -292,7 +292,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
 
             // Assert.
-            Assert.IsTrue(ex.Message.Contains("Could not delete this media item"));
+            Assert.AreEqual("Cannot delete this media item. The provided token lacks the CanDelete permission.", ex.Message);
         }
 
         [TestMethod]
@@ -312,7 +312,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
 
             // Assert.
-            Assert.IsTrue(ex.Message.Contains("does not own media item"));
+            Assert.AreEqual("Cannot delete this media item. The provided token does not own this media item.", ex.Message);
         }
 
         [TestMethod]
@@ -345,7 +345,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
 
             // Assert.
-            Assert.AreEqual("Media Item is not found", ex.Message);
+            Assert.AreEqual("Media item not found.", ex.Message);
         }
 
         [TestMethod]
@@ -368,7 +368,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
 
             // Assert.
-            Assert.AreEqual("Could not modify this media item. Provided token does not have the CanModify permission.", ex.Message);
+            Assert.AreEqual("Cannot modify this media item. The provided token lacks the CanModify permission.", ex.Message);
 
         }
 
@@ -386,7 +386,7 @@ namespace Media.Test.Unit.Infrastructure.Services
                 await this._mediaItemService.ModifyById(item.Id, fakeToken.Token, new ModifyMediaItemRequest("New Title", "New Desc"))
             );
 
-            Assert.AreEqual("Could not modify this media item. Provided token does not own media item.", ex.Message);
+            Assert.AreEqual("Cannot modify this media item. The provided token does not own this media item.", ex.Message);
         }
 
 
@@ -414,7 +414,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
 
             // Assert.
-            Assert.AreEqual("Files of type '.exe' are not allowed.", ex.Message);
+            Assert.AreEqual("Files with the extension '.exe' are not allowed.", ex.Message);
         }
 
         [TestMethod]
@@ -429,7 +429,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
 
             // Assert.
-            Assert.AreEqual($"File is too large. Limit is {this._options.Value.MaxFileSize} bytes.", ex.Message);
+            Assert.AreEqual($"File size exceeds the maximum limit of {this._options.Value.MaxFileSize} bytes.", ex.Message);
         }
 
         private IFormFile CreateFakeFormFile(string? content = null, string fileName = "test.jpg")

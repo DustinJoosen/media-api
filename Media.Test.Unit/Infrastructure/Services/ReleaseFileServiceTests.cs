@@ -63,7 +63,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
 
             // Assert.
-            Assert.AreEqual("Uploaded file is null or has a length of 0", ex.Message);
+            Assert.AreEqual("Uploaded file is null or empty.", ex.Message);
         }
 
         [TestMethod]
@@ -80,7 +80,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
 
             // Assert.
-            Assert.AreEqual("Uploaded file is null or has a length of 0", ex.Message);
+            Assert.AreEqual("Uploaded file is null or empty.", ex.Message);
         }
 
         [TestMethod]

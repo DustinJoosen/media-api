@@ -1,4 +1,5 @@
 ﻿using Media.Abstractions.Interfaces;
+using Media.Core;
 using Media.Core.Exceptions;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -18,16 +19,16 @@ namespace Media.Presentation.Attributes
         {
             var token = context.HttpContext.Request.Headers.Authorization.ToString();
             if (string.IsNullOrEmpty(token))
-                throw new UnauthorizedException("Didn't provide an authorization token in header.");
+                throw new UnauthorizedException(ErrorMessages.NoAuthTokenInHeader());
 
             var service = context.HttpContext.RequestServices.GetRequiredService<IAuthTokenService>();
             var tokenInfo = await service.FindTokenInfo(token);
 
             if (!tokenInfo.IsActive)
-                throw new UnauthorizedException("Could not use this token. Provided token is deactivated.");
+                throw new UnauthorizedException(ErrorMessages.CannotUseTokenItIsNoun("deactivated"));
 
             if (tokenInfo.ExpiresAt < DateTime.Now)
-                throw new UnauthorizedException("Could not use this token. Provided token is expired.");
+                throw new UnauthorizedException(ErrorMessages.CannotUseTokenItIsNoun("expired"));
         }
     }
 }

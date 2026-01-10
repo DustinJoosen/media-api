@@ -104,7 +104,7 @@ namespace Media.Test.Unit.Presentation.Attributes
             });
 
             // Assert.
-            Assert.AreEqual("Didn't provide an authorization token in header.", ex.Message);
+            Assert.AreEqual("No authorization token provided in header.", ex.Message);
         }
 
         [TestMethod]
@@ -121,7 +121,7 @@ namespace Media.Test.Unit.Presentation.Attributes
             });
 
             // Assert.
-            Assert.AreEqual("Could not use this token. Provided token is deactivated.", ex.Message);
+            Assert.AreEqual("Cannot use this token. Token is deactivated.", ex.Message);
         }
 
         
@@ -139,10 +139,8 @@ namespace Media.Test.Unit.Presentation.Attributes
             });
 
             // Assert.
-            Assert.AreEqual("Could not use this token. Provided token is expired.", ex.Message);
+            Assert.AreEqual("Cannot use this token. Token is expired.", ex.Message);
         }
-
-
 
     }
 }

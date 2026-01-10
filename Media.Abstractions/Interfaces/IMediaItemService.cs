@@ -7,53 +7,66 @@ namespace Media.Abstractions.Interfaces
         /// <summary>
         /// Upload a media item and store it locally.
         /// </summary>
-        /// <param name="mediaItemReq">Uploading info.</param>
         /// <param name="token">Token to proof you have writing rights.</param>
+        /// <param name="mediaItemReq">Uploading info.</param>
+        /// <param name="cancellationToken">Token to observe for cancellation requests.</param>
         /// <returns>Created media item object.</returns>
-        Task<UploadMediaItemResponse> UploadMediaItem(UploadMediaItemRequest mediaItemReq, string token, CancellationToken cancellationToken = default);
+        Task<UploadMediaItemResponse> UploadMediaItem(string token, 
+            UploadMediaItemRequest mediaItemReq, CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Gets the filestream. If it can't be previewed it will return notfound.png
+        /// Gets the filestream. If it can't be previewed it will return notfound.png.
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
+        /// <param name="cancellationToken">Token to observe for cancellation requests.</param>
         /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
-        Task<GetMediaItemPreviewResponse> GetMediaItemFileStreamPreview(Guid id, CancellationToken cancellationToken = default);
-        
+        Task<GetMediaItemPreviewResponse> GetMediaItemFileStreamPreview(Guid id, 
+            CancellationToken cancellationToken = default);
+
         /// <summary>
-        /// Gets the download filestream. If it can't be previewed it will return notfound.png
+        /// Gets the download filestream. If it can't be previewed it will return notfound.png.
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
+        /// <param name="cancellationToken">Token to observe for cancellation requests.</param>
         /// <returns>Download information about the file.</returns>
-        Task<GetMediaItemDownloadResponse> GetMediaItemFileStreamDownload(Guid id, CancellationToken cancellationToken = default);
+        Task<GetMediaItemDownloadResponse> GetMediaItemFileStreamDownload(Guid id, 
+            CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets info of the MediaItem.
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
+        /// <param name="cancellationToken">Token to observe for cancellation requests.</param>
         /// <returns>Meta info of the MediaItem.</returns>
-        Task<GetMediaItemInfoResponse> GetInfo(Guid id, CancellationToken cancellationToken = default);
+        Task<GetMediaItemInfoResponse> GetInfo(Guid id, 
+            CancellationToken cancellationToken = default);
 
-        /// <summary>
-        /// Gets all media items created by the given token.
-        /// </summary>
-        /// <param name="token">Token to look for.</param>
-        /// <param name="pagination">Pagination object.</param>
-        /// <returns>List of all media items.</returns>
-        Task<GetMediaItemsByTokenResponse> ByToken(string token, PaginationReq pagination, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Gets all media items created by the given token.
+		/// </summary>
+		/// <param name="token">Token to look for.</param>
+		/// <param name="pagination">Pagination object.</param>
+		/// <param name="cancellationToken">Token to observe for cancellation requests.</param>
+		/// <returns>List of all media items.</returns>
+		Task<GetMediaItemsByTokenResponse> ByToken(string token, PaginationReq pagination, 
+            CancellationToken cancellationToken = default);
 
-        /// <summary>
-        /// Deletes the MediaItem data record and the folder/contents from the id.
-        /// </summary>
-        /// <param name="id">Id of the MediaItem to delete.</param>
-        /// <param name="token">Token to proof you have the correct deletion rights.</param>
-        Task DeleteById(Guid id, string token, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Deletes the MediaItem data record and the folder/contents from the id.
+		/// </summary>
+		/// <param name="id">Id of the MediaItem to delete.</param>
+		/// <param name="token">Token to proof you have the correct deletion rights.</param>
+		/// <param name="cancellationToken">Token to observe for cancellation requests.</param>
+		Task DeleteById(Guid id, string token, CancellationToken cancellationToken = default);
 
-        /// <summary>
-        /// Modifies the MediaItem data record.
-        /// </summary>
-        /// <param name="id">Id of the MediaItem to modify.</param>
-        /// <param name="token">Token to proof you have the correct deletion rights.</param>
-        /// <param name="modifyMediaItemReq">new title and description</param>
-        Task ModifyById(Guid id, string token, ModifyMediaItemRequest modifyMediaItemReq, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Modifies the MediaItem data record.
+		/// </summary>
+		/// <param name="id">Id of the MediaItem to modify.</param>
+		/// <param name="modifyMediaItemReq">new title and description</param>
+		/// <param name="token">Token to proof you have the correct deletion rights.</param>
+		/// <param name="cancellationToken">Token to observe for cancellation requests.</param>
+		Task ModifyById(Guid id, ModifyMediaItemRequest modifyMediaItemReq, string token, 
+            CancellationToken cancellationToken = default);
     }
 }

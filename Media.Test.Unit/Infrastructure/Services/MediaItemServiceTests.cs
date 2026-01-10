@@ -26,7 +26,8 @@ namespace Media.Test.Unit.Infrastructure.Services
         {
             this.BaseSetup();
 
-            this._options = Options.Create(new UploadPolicyOptions(20, new List<string> { ".exe" }));
+            this._options = Options.Create(new UploadPolicyOptions(
+				20, new List<string> { ".exe" }));
             this._authTokenService = new AuthTokenService(this._context);
             this._mediaItemService = new MediaItemService(
                 this._authTokenService,
@@ -43,10 +44,12 @@ namespace Media.Test.Unit.Infrastructure.Services
         public async Task UploadMediaItem_ShouldCreateMediaItem_WhenAuthorized()
         {
             // Arrange.
-            var request = new UploadMediaItemRequest("Testing File", null, this.CreateFakeFormFile());
+            var request = new UploadMediaItemRequest("Testing File", null,
+				this.CreateFakeFormFile());
 
             // Act.
-            var response = await this._mediaItemService.UploadMediaItem(request, this._testingToken);
+            var response = await this._mediaItemService
+				.UploadMediaItem(this._testingToken, request);
 
             // Assert.
             Assert.AreNotEqual(Guid.Empty, response.Id);
@@ -60,35 +63,44 @@ namespace Media.Test.Unit.Infrastructure.Services
         public async Task UploadMediaItem_ShouldThrowUnauthorizedException_WhenTokenLacksPermission()
         {
             // Arrange.
-            var mediaRequest = new UploadMediaItemRequest("Testing File", null, this.CreateFakeFormFile());
-            var tokenRequest = new CreateTokenRequest("ReadonlyToken", DateTime.Now.AddDays(1));
+            var mediaRequest = new UploadMediaItemRequest("Testing File", null, 
+				this.CreateFakeFormFile());
+            var tokenRequest = new CreateTokenRequest("ReadonlyToken", 
+				DateTime.Now.AddDays(1));
+
             var tokenResult = await this._authTokenService.CreateToken(tokenRequest);
             
-            var token = await this._context.AuthTokens.SingleOrDefaultAsync(t => t.Token == tokenResult.Token);
+            var token = await this._context.AuthTokens
+				.SingleOrDefaultAsync(t => t.Token == tokenResult.Token);
             token!.Permissions = AuthTokenPermissions.CanRead;
             await this._context.SaveChangesAsync();
             
             // Act.
             var ex = await Assert.ThrowsExceptionAsync<UnauthorizedException>(async () =>
             {
-                await this._mediaItemService.UploadMediaItem(mediaRequest, tokenResult.Token);
+                await this._mediaItemService.UploadMediaItem(tokenResult.Token, mediaRequest);
             });
 
             // Assert.
-            Assert.AreEqual("Cannot upload this media item. The provided token lacks the CanCreate permission.", ex.Message);
+            Assert.AreEqual("Cannot upload this media item. " +
+				"The provided token lacks the CanCreate permission.", ex.Message);
         }
 
         [TestMethod]
         public async Task UploadMediaItem_ShouldNotSaveDb_WhenFileFails()
         {
             // Arrange.
-            var request = new UploadMediaItemRequest("Testing File", null, this.CreateFakeFormFile());
+            var request = new UploadMediaItemRequest("Testing File", null, 
+				this.CreateFakeFormFile());
             var service = new MediaItemService(
-                this._authTokenService, this._context, new TestingFileService() { ShouldThrowOnUpload = true }, this._options);
+                this._authTokenService, this._context, new TestingFileService() 
+				{ 
+					ShouldThrowOnUpload = true 
+				}, this._options);
 
             // Act.
             var ex = await Assert.ThrowsExceptionAsync<Exception>(async () =>
-                await service.UploadMediaItem(request, this._testingToken)
+                await service.UploadMediaItem(this._testingToken, request)
             );
 
             // Assert.
@@ -100,8 +112,11 @@ namespace Media.Test.Unit.Infrastructure.Services
         public async Task GetMediaItemFileStreamPreview_ShouldReturnFile_WhenMediaItemExists()
         {
             // Arrange.
-            var mediaRequest = new UploadMediaItemRequest("Testing File", null, this.CreateFakeFormFile());
-            var response = await this._mediaItemService.UploadMediaItem(mediaRequest, this._testingToken);
+            var mediaRequest = new UploadMediaItemRequest("Testing File", null, 
+				this.CreateFakeFormFile());
+
+            var response = await this._mediaItemService.UploadMediaItem(this._testingToken, 
+				mediaRequest);
 
             // Act.
             var result = await this._mediaItemService.GetMediaItemFileStreamPreview(response.Id);
@@ -133,11 +148,15 @@ namespace Media.Test.Unit.Infrastructure.Services
         public async Task GetMediaItemFileStreamDownload_ShouldReturnDownload_WhenMediaItemExists()
         {
             // Arrange.
-            var mediaRequest = new UploadMediaItemRequest("Testing File", null, this.CreateFakeFormFile());
-            var response = await this._mediaItemService.UploadMediaItem(mediaRequest, this._testingToken);
+            var mediaRequest = new UploadMediaItemRequest(
+				"Testing File", null, this.CreateFakeFormFile());
+
+            var response = await this._mediaItemService
+				.UploadMediaItem(this._testingToken, mediaRequest);
 
             // Act.
-            var result = await this._mediaItemService.GetMediaItemFileStreamDownload(response.Id);
+            var result = await this._mediaItemService
+				.GetMediaItemFileStreamDownload(response.Id);
 
             // Assert.
             using (result.FileStream)
@@ -204,13 +223,14 @@ namespace Media.Test.Unit.Infrastructure.Services
         [TestMethod]
         public async Task ByToken_ShouldReturnPaginatedItems_ForGivenToken()
         {
-            // Arrange.
+			// Arrange.
+			var token = this._testingToken;
             var items = new[]
             {
-                new MediaItem { Id = Guid.NewGuid(), CreatedByToken = this._testingToken, Title = "A"},
-                new MediaItem { Id = Guid.NewGuid(), CreatedByToken = this._testingToken, Title = "B"},
-                new MediaItem { Id = Guid.NewGuid(), CreatedByToken = this._testingToken, Title = "C"},
-                new MediaItem { Id = Guid.NewGuid(), CreatedByToken = "OtherToken", Title = "Other"}
+                new MediaItem { Id = Guid.NewGuid(), CreatedByToken = token, Title = "A"},
+                new MediaItem { Id = Guid.NewGuid(), CreatedByToken = token, Title = "B"},
+                new MediaItem { Id = Guid.NewGuid(), CreatedByToken = token, Title = "C"},
+                new MediaItem { Id = Guid.NewGuid(), CreatedByToken = "OtherToken", Title = "D"}
             };
 
             this._context.MediaItems.AddRange(items);
@@ -236,7 +256,12 @@ namespace Media.Test.Unit.Infrastructure.Services
         public async Task DeleteById_ShouldRemoveItemAndDeleteFolder_WhenAuthorized()
         {
             // Arrange.
-            var item = new MediaItem { Id = Guid.NewGuid(), CreatedByToken = this._testingToken, Title = "Test" };
+            var item = new MediaItem 
+			{ 
+				Id = Guid.NewGuid(), 
+				CreatedByToken = this._testingToken, 
+				Title = "Test" 
+			};
             this._context.MediaItems.Add(item);
             await this._context.SaveChangesAsync();
 
@@ -266,13 +291,19 @@ namespace Media.Test.Unit.Infrastructure.Services
         public async Task DeleteById_ShouldThrowUnauthorizedException_WhenTokenCannotDelete()
         {
             // Arrange.
-            var item = new MediaItem { Id = Guid.NewGuid(), CreatedByToken = this._testingToken, Title = "Test" };
+            var item = new MediaItem 
+			{ 
+				Id = Guid.NewGuid(), 
+				CreatedByToken = this._testingToken, 
+				Title = "Test" 
+			};
             this._context.MediaItems.Add(item);
 
             var tokenRequest = new CreateTokenRequest("ReadonlyToken", DateTime.Now.AddDays(1));
             var tokenResult = await this._authTokenService.CreateToken(tokenRequest);
 
-            var token = await this._context.AuthTokens.SingleOrDefaultAsync(t => t.Token == tokenResult.Token);
+            var token = await this._context.AuthTokens
+				.SingleOrDefaultAsync(t => t.Token == tokenResult.Token);
             token!.Permissions = AuthTokenPermissions.CanRead;
             await this._context.SaveChangesAsync();
 
@@ -282,14 +313,20 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
 
             // Assert.
-            Assert.AreEqual("Cannot delete this media item. The provided token lacks the CanDelete permission.", ex.Message);
+            Assert.AreEqual("Cannot delete this media item. " +
+				"The provided token lacks the CanDelete permission.", ex.Message);
         }
 
         [TestMethod]
         public async Task DeleteById_ShouldThrowUnauthorizedException_WhenTokenDoesNotOwnItem()
         {
             // Arrange.
-            var item = new MediaItem { Id = Guid.NewGuid(), CreatedByToken = this._testingToken, Title = "Test" };
+            var item = new MediaItem 
+			{ 
+				Id = Guid.NewGuid(), 
+				CreatedByToken = this._testingToken, 
+				Title = "Test" 
+			};
             this._context.MediaItems.Add(item);
             await this._context.SaveChangesAsync();
 
@@ -302,20 +339,27 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
 
             // Assert.
-            Assert.AreEqual("Cannot delete this media item. The provided token does not own this media item.", ex.Message);
+            Assert.AreEqual("Cannot delete this media item. " +
+				"The provided token does not own this media item.", ex.Message);
         }
 
         [TestMethod]
         public async Task ModifyById_ShouldUpdateTitleAndDescription_WhenAuthorized()
         {
             // Arrange.
-            var item = new MediaItem { Id = Guid.NewGuid(), CreatedByToken = this._testingToken, Title = "Titl", Description = "Desc" };
+            var item = new MediaItem 
+			{ 
+				Id = Guid.NewGuid(), 
+				CreatedByToken = this._testingToken, 
+				Title = "Titl", 
+				Description = "Desc" 
+			};
             this._context.MediaItems.Add(item);
             await this._context.SaveChangesAsync();
             var updateReq = new ModifyMediaItemRequest("New Title", "New Desc");
 
             // Act.
-            await this._mediaItemService.ModifyById(item.Id, this._testingToken, updateReq);
+            await this._mediaItemService.ModifyById(item.Id, updateReq, this._testingToken);
 
             // Assert.
             var updated = await this._context.MediaItems.SingleAsync(m => m.Id == item.Id);
@@ -331,7 +375,10 @@ namespace Media.Test.Unit.Infrastructure.Services
 
             // Act.
             var ex = await Assert.ThrowsExceptionAsync<NotFoundException>(async () =>
-                await this._mediaItemService.ModifyById(Guid.NewGuid(), this._testingToken, updateReq)
+                await this._mediaItemService.ModifyById(
+					Guid.NewGuid(), 
+					updateReq, 
+					this._testingToken)
             );
 
             // Assert.
@@ -342,23 +389,31 @@ namespace Media.Test.Unit.Infrastructure.Services
         public async Task ModifyById_ShouldThrowUnauthorizedException_WhenTokenCannotModify()
         {
             // Arrange.
-            var item = new MediaItem { Id = Guid.NewGuid(), CreatedByToken = this._testingToken, Title = "Titl", Description = "Desc" };
+            var item = new MediaItem 
+			{
+				Id = Guid.NewGuid(), 
+				CreatedByToken = this._testingToken, 
+				Title = "Titl", 
+				Description = "Desc" 
+			};
             this._context.MediaItems.Add(item);
             await this._context.SaveChangesAsync();
 
-            var tokenResult = await this._authTokenService.CreateToken(new CreateTokenRequest("FakeToken", DateTime.Now.AddDays(1)));
-            var token = await this._context.AuthTokens.SingleOrDefaultAsync(t => t.Token == tokenResult.Token);
+            var tokenResult = await this._authTokenService.CreateToken(
+				new CreateTokenRequest("FakeToken", DateTime.Now.AddDays(1)));
+            var token = await this._context.AuthTokens.FindAsync(tokenResult.Token);
             token!.Permissions = AuthTokenPermissions.CanRead;
             await this._context.SaveChangesAsync();
             var updateReq = new ModifyMediaItemRequest("New Title", "New Desc");
 
             // Act.
             var ex = await Assert.ThrowsExceptionAsync<UnauthorizedException>(async () =>
-                await this._mediaItemService.ModifyById(item.Id, tokenResult.Token, updateReq)
+                await this._mediaItemService.ModifyById(item.Id, updateReq, tokenResult.Token)
             );
 
             // Assert.
-            Assert.AreEqual("Cannot modify this media item. The provided token lacks the CanModify permission.", ex.Message);
+            Assert.AreEqual("Cannot modify this media item. " +
+				"The provided token lacks the CanModify permission.", ex.Message);
 
         }
 
@@ -366,17 +421,26 @@ namespace Media.Test.Unit.Infrastructure.Services
         public async Task ModifyById_ShouldThrowUnauthorizedException_WhenTokenDoesNotOwnItem()
         {
             // Arrange.
-            var item = new MediaItem { Id = Guid.NewGuid(), CreatedByToken = this._testingToken, Title = "Titl", Description = "Desc" };
+            var item = new MediaItem 
+			{ 
+				Id = Guid.NewGuid(), 
+				CreatedByToken = this._testingToken, 
+				Title = "Titl", 
+				Description = "Desc" 
+			};
             this._context.MediaItems.Add(item);
             await this._context.SaveChangesAsync();
-            var fakeToken = await this._authTokenService.CreateToken(new CreateTokenRequest("FakeToken", DateTime.Now.AddDays(1)));
+            var fakeToken = await this._authTokenService.CreateToken(
+				new CreateTokenRequest("FakeToken", DateTime.Now.AddDays(1)));
 
             // Act.
             var ex = await Assert.ThrowsExceptionAsync<UnauthorizedException>(async () =>
-                await this._mediaItemService.ModifyById(item.Id, fakeToken.Token, new ModifyMediaItemRequest("New Title", "New Desc"))
+                await this._mediaItemService.ModifyById(item.Id, 
+					new ModifyMediaItemRequest("New Title", "New Desc"), fakeToken.Token)
             );
 
-            Assert.AreEqual("Cannot modify this media item. The provided token does not own this media item.", ex.Message);
+            Assert.AreEqual("Cannot modify this media item. " +
+				"The provided token does not own this media item.", ex.Message);
         }
 
         [TestMethod]
@@ -418,7 +482,7 @@ namespace Media.Test.Unit.Infrastructure.Services
             );
 
             // Assert.
-            Assert.AreEqual($"File size exceeds the maximum limit of {this._options.Value.MaxFileSize} bytes.", ex.Message);
+            Assert.AreEqual($"File size exceeds the maximum limit of 20 bytes.", ex.Message);
         }
 
         private IFormFile CreateFakeFormFile(string? content = null, string fileName = "test.jpg")

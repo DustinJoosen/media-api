@@ -18,8 +18,8 @@ namespace Media.Test.Unit.Infrastructure.Services
             this.BaseSetup();
 
             /*
-             * Yeah, yeah. I know it's not a ReleaseFileService as the Test class name suggests, but
-             * it's inheriting from the ReleaseFileService. The ONLY difference is the root folder.
+             * Yeah, yeah. I know it's not a ReleaseFileService as the Test class name suggests, 
+             * but it inherits from the ReleaseFileService. The ONLY difference is the root folder.
              * Don't want the tests to spam my development or release folder.
              */
             this._fileService = new TestingFileService();

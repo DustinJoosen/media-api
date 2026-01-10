@@ -42,17 +42,20 @@ namespace Media.Presentation.Middleware
             if (cacheContains)
                 this._cache.Set(key, (value.Item1, value.Item2 + 1));
 
-            // Reset if the window has expired, or the cache doesn't exist yet.
-            if (!cacheContains || (value.Item1 + TimeSpan.FromSeconds(this._options.WindowSeconds)) <= DateTime.UtcNow)
+			// Reset if the window has expired, or the cache doesn't exist yet.
+			var windowDuration = TimeSpan.FromSeconds(this._options.WindowSeconds);
+            if (!cacheContains || (value.Item1 + windowDuration) <= DateTime.UtcNow)
                 this._cache.Set(key, (DateTime.UtcNow, 1));
 
             // If the counter is higher or equal to the limit, throw a 429.
             var (start, counter) = this._cache.Get<(DateTime, int)>(key);
             if (counter >= this._options.RequestsPerWindow)
             {
-                var retry = (int)(start + TimeSpan.FromSeconds(this._options.WindowSeconds) - DateTime.UtcNow).TotalSeconds;
-                throw new TooManyRequestsException(
-                    message: $"You’re sending requests too quickly. Please wait {retry} seconds before trying again.",
+				var retry = (int)(start + windowDuration - DateTime.UtcNow).TotalSeconds;
+				
+				throw new TooManyRequestsException(
+                    message: $"You’re sending requests too quickly. " +
+							 $"Please wait {retry} seconds before trying again.",
                     limit: this._options.RequestsPerWindow - 1,
                     remaining: 0,
                     retryAfterSeconds: retry

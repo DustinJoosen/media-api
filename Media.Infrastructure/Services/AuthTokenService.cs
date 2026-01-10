@@ -21,8 +21,10 @@ namespace Media.Infrastructure.Services
         /// Create an authorization token.
         /// </summary>
         /// <param name="tokenReq">Token creation information.</param>
+        /// <param name="cancellationToken">Token to observe for cancellation requests.</param>
         /// <returns>Created token.</returns>
-        public async virtual Task<CreateTokenResponse> CreateToken(CreateTokenRequest tokenReq, CancellationToken cancellationToken = default)
+        public async virtual Task<CreateTokenResponse> CreateToken(CreateTokenRequest tokenReq, 
+            CancellationToken cancellationToken = default)
         {
             if (await this.IsNameUsed(tokenReq.Name, cancellationToken))
                 throw new AlreadyUsedException(ErrorMessages.TokenNameAlreadyUsed(tokenReq.Name));
@@ -46,24 +48,31 @@ namespace Media.Infrastructure.Services
         /// Finds the info of an authorization token.
         /// </summary>
         /// <param name="token">Token to find information of.</param>
+        /// <param name="cancellationToken">Token to observe for cancellation requests.</param>
         /// <returns>Info of the token.</returns>
-        public async virtual Task<FindTokenInfoResponse> FindTokenInfo(string token, CancellationToken cancellationToken = default)
+        public async virtual Task<FindTokenInfoResponse> FindTokenInfo(string token, 
+            CancellationToken cancellationToken = default)
         {
-            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token, cancellationToken);
+            var authToken = await this._context.AuthTokens.FindAsync(token, cancellationToken);
             if (authToken == null)
                 throw new NotFoundException(ErrorMessages.TokenDoesNotExist(token));
 
-            return new(authToken.Name, authToken.ExpiresAt, authToken.IsActive, authToken.Permissions);
+            return new(
+                Name: authToken.Name, 
+                ExpiresAt: authToken.ExpiresAt, 
+                IsActive: authToken.IsActive, 
+                Permissions: authToken.Permissions);
         }
 
         /// <summary>
         /// Deactivates an authorization token.
         /// </summary>
         /// <param name="token">Token to deactivate.</param>
-        /// <returns>Whether the operation succeeded.</returns>
-        public async virtual Task DeactivateToken(string token, CancellationToken cancellationToken = default)
+        /// <param name="cancellationToken">Token to observe for cancellation requests.</param>
+        public async virtual Task DeactivateToken(string token, 
+            CancellationToken cancellationToken = default)
         {
-            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token, cancellationToken);
+            var authToken = await this._context.AuthTokens.FindAsync(token, cancellationToken);
             if (authToken == null)
                 throw new NotFoundException(ErrorMessages.TokenDoesNotExist(token));
 
@@ -83,10 +92,12 @@ namespace Media.Infrastructure.Services
         /// Gets the permissions an auth token has.
         /// </summary>
         /// <param name="token">Token to find permissions from.</param>
+        /// <param name="cancellationToken">Token to observe for cancellation requests.</param>
         /// <returns>Permissions object of the given token.</returns>
-        public async Task<AuthTokenPermissions> GetRoles(string token, CancellationToken cancellationToken = default)
+        public async Task<AuthTokenPermissions> GetRoles(string token, 
+            CancellationToken cancellationToken = default)
         {
-            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == token, cancellationToken);
+            var authToken = await this._context.AuthTokens.FindAsync(token, cancellationToken);
             if (authToken == null)
                 throw new NotFoundException(ErrorMessages.TokenDoesNotExist(token));
 
@@ -94,11 +105,16 @@ namespace Media.Infrastructure.Services
         }
 
         /// <summary>
-        /// Changes permissions of an authorization token. Note that this action requires a token with the CanManagePermissions permission.
+        /// Changes permissions of an authorization token. Note that this action requires 
+        /// a token with the CanManagePermissions permission.
         /// </summary>
-        /// <param name="changeTokenPermissionReq">The token to change, and the new permissions.</param>
-        /// <param name="token">Token to proof the user is allowed to change permissions. NOT THE TOKEN THAT WILL BE CHANGED.</param>
-        public async Task ChangePermissions(ChangeTokenPermissionRequest changeTokenPermissionReq, string token, CancellationToken cancellationToken = default)
+        /// <param name="changeReq">The token to change, and the new permissions.</param>
+        /// <param name="token">
+        /// Token used to authorize the permission change (not the token being modified).
+        /// </param>
+        /// <param name="cancellationToken">Token to observe for cancellation requests.</param>
+        public async Task ChangePermissions(ChangeTokenPermissionRequest changeTokenPermissionReq,
+            string token, CancellationToken cancellationToken = default)
         {
             // Check that you're allowed to change the permissions.
             var roles = await this.GetRoles(token);
@@ -106,9 +122,10 @@ namespace Media.Infrastructure.Services
                 throw new UnauthorizedException(ErrorMessages.TokenDoesNotHavePermissions());
 
             // Find and check the existence of the token.
-            var authToken = await this._context.AuthTokens.SingleOrDefaultAsync(at => at.Token == changeTokenPermissionReq.Token, cancellationToken);
-            if (authToken == null)
-                throw new NotFoundException(ErrorMessages.TokenDoesNotExist(changeTokenPermissionReq.Token));
+            var authToken = await this._context.AuthTokens.FindAsync(changeTokenPermissionReq.Token,
+				cancellationToken);
+			if (authToken == null)
+                throw new NotFoundException(ErrorMessages.TokenDoesNotExist(token));
 
             // Update the new permission.
             try
@@ -127,8 +144,10 @@ namespace Media.Infrastructure.Services
         /// Check if a token already is named this.
         /// </summary>
         /// <param name="name">Name to check.</param>
-        /// <returns>Whether the given name is already in use.</returns>
-        private async Task<bool> IsNameUsed(string name, CancellationToken cancellationToken = default) =>
+        /// <param name="cancellationToken">Token to observe for cancellation requests.</param>
+        /// <returns>True if the given name is already in use.</returns>
+        private async Task<bool> IsNameUsed(string name, 
+            CancellationToken cancellationToken = default) =>
             await this._context.AuthTokens.AnyAsync(at => at.Name == name, cancellationToken);
 
         /// <summary>

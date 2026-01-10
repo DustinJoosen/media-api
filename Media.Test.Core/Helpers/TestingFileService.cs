@@ -8,7 +8,8 @@ namespace Media.Test.Core.Helpers
     {
         public bool ShouldThrowOnUpload { get; set; }
 
-        public override Task UploadFile(Guid id, IFormFile formFile, CancellationToken cancellationToken = default)
+        public override Task UploadFile(Guid id, IFormFile formFile, 
+			CancellationToken cancellationToken = default)
         {
             if (this.ShouldThrowOnUpload)
                 throw new Exception("Could not upload the file on the testing file service.");

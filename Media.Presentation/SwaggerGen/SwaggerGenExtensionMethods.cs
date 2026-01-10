@@ -11,7 +11,7 @@ namespace Media.Presentation.SwaggerGen
         /// <summary>
         /// Add configuration for the swagger interface.
         /// </summary>
-        /// <returns>The servicecollection self, to allow method-chaining</returns>
+        /// <returns>The servicecollection self, to allow method-chaining.</returns>
         public static IServiceCollection AddSwaggerGeneration(this IServiceCollection services)
         {
             services.AddSwaggerGen(options =>

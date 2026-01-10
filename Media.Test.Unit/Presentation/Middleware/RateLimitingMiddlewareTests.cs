@@ -16,12 +16,13 @@ namespace Media.Test.Unit.Presentation.Middleware
         {
             // Arrange.
             var nextCalled = false;
-            var middleware = new RateLimitingMiddleware((_) => 
+			var options = Options.Create(new RateLimitingOptions(1, 1));
+			var middleware = new RateLimitingMiddleware((_) => 
             {
                 nextCalled = true;
                 return Task.CompletedTask;
             }, 
-            new MemoryCache(new MemoryCacheOptions()), Options.Create(new RateLimitingOptions(3, 60)));
+            new MemoryCache(new MemoryCacheOptions()), options);
             var context = new DefaultHttpContext();
             context.Connection.RemoteIpAddress = IPAddress.Loopback;
             
@@ -35,9 +36,10 @@ namespace Media.Test.Unit.Presentation.Middleware
         [TestMethod]
         public async Task InvokeAsync_ThrowsTooManyRequestsException_WhenOverLimit()
         {
-            // Arrange.
-            var middleware = new RateLimitingMiddleware((_) => Task.CompletedTask, 
-                new MemoryCache(new MemoryCacheOptions()), Options.Create(new RateLimitingOptions(1, 60)));
+			// Arrange.
+			var options = Options.Create(new RateLimitingOptions(1, 1));
+			var middleware = new RateLimitingMiddleware((_) => Task.CompletedTask, 
+                new MemoryCache(new MemoryCacheOptions()), options);
             var context = new DefaultHttpContext();
             context.Connection.RemoteIpAddress = IPAddress.Loopback;
             await middleware.InvokeAsync(context);
@@ -56,13 +58,15 @@ namespace Media.Test.Unit.Presentation.Middleware
         {
             // Arrange.
             var nextCalled = false;
-            var middleware = new RateLimitingMiddleware((_) =>
+			var options = Options.Create(new RateLimitingOptions(1, 1));
+			var middleware = new RateLimitingMiddleware((_) =>
             {
                 nextCalled = true;
                 return Task.CompletedTask;
             },
-            new MemoryCache(new MemoryCacheOptions()), Options.Create(new RateLimitingOptions(1, 1)));
-            var context = new DefaultHttpContext();
+            new MemoryCache(new MemoryCacheOptions()), options);
+            
+			var context = new DefaultHttpContext();
             context.Connection.RemoteIpAddress = IPAddress.Loopback;
             await middleware.InvokeAsync(context);
 

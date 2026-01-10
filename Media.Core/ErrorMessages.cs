@@ -27,7 +27,7 @@
         public static string NoAuthTokenInHeader() =>
             $"No authorization token provided in header.";
 
-        public static string CannotUseTokenItIsNoun(string noun) =>
+        public static string CannotUseTokenItIs(string noun) =>
             $"Cannot use this token. Token is {noun}.";
 
         #endregion

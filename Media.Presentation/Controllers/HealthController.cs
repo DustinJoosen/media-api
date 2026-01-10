@@ -63,7 +63,10 @@ namespace Media.Presentation.Controllers
             var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
             var uptimeSpan = DateTime.Now - AppRunningTime;
-            var uptime = $"{(int)uptimeSpan.TotalHours}h {uptimeSpan.Minutes}m {uptimeSpan.Seconds}s";
+            var uptime = $"" +
+				$"{(int)uptimeSpan.TotalHours}h " +
+				$"{uptimeSpan.Minutes}m " +
+				$"{uptimeSpan.Seconds}s";
 
             return new RuntimeResponse(environment, build, startTime, uptime, timestamp);
         }

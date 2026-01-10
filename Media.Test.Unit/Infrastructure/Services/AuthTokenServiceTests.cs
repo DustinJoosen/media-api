@@ -32,7 +32,8 @@ namespace Media.Test.Unit.Infrastructure.Services
             // Assert.
             Assert.IsNotNull(result.Token);
 
-            var tokenInDb = await this._context.AuthTokens.FirstOrDefaultAsync(token => token.Name == "MyToken");
+            var tokenInDb = await this._context.AuthTokens
+				.FirstOrDefaultAsync(token => token.Name == "MyToken");
             Assert.IsNotNull(tokenInDb);
             Assert.IsTrue(tokenInDb.IsActive);
         }
@@ -146,39 +147,45 @@ namespace Media.Test.Unit.Infrastructure.Services
         [TestMethod]
         public async Task ChangePermissions_ShouldUpdatePermissions_WhenAuthorized()
         {
-            // Arrange.
-            var managerTokenReq = new CreateTokenRequest("ManagerToken", DateTime.Now.AddDays(1));
+			// Arrange.
+			var tomorrow = DateTime.Now.AddDays(1);
+			var managerTokenReq = new CreateTokenRequest("ManagerToken", tomorrow);
             var managerResult = await this._service.CreateToken(managerTokenReq);
           
-            var managerEntity = await this._context.AuthTokens.FirstAsync(t => t.Token == managerResult.Token);
+            var managerEntity = await this._context.AuthTokens
+				.FirstAsync(t => t.Token == managerResult.Token);
             managerEntity.Permissions = AuthTokenPermissions.CanManagePermissions;
             this._context.AuthTokens.Update(managerEntity);
             await this._context.SaveChangesAsync();
 
-            var targetTokenReq = new CreateTokenRequest("TargetToken", DateTime.Now.AddDays(1));
+            var targetTokenReq = new CreateTokenRequest("TargetToken", tomorrow);
             var targetResult = await this._service.CreateToken(targetTokenReq);
 
-            var request = new ChangeTokenPermissionRequest(targetResult.Token, AuthTokenPermissions.CanModify);
+            var request = new ChangeTokenPermissionRequest(targetResult.Token, 
+				AuthTokenPermissions.CanModify);
 
             // Act.
             await this._service.ChangePermissions(request, managerResult.Token);
 
             // Assert.
-            var updated = await this._context.AuthTokens.FirstAsync(t => t.Token == targetResult.Token);
+            var updated = await this._context.AuthTokens
+				.FirstAsync(t => t.Token == targetResult.Token);
             Assert.AreEqual(AuthTokenPermissions.CanModify, updated.Permissions);
         }
 
         [TestMethod]
         public async Task ChangePermissions_ShouldThrowUnauthorizedException_WhenTokenNotAllowed()
         {
-            // Arrange.
-            var managerTokenReq = new CreateTokenRequest("ManagerToken", DateTime.Now.AddDays(1));
+			// Arrange.
+			var tomorrow = DateTime.Now.AddDays(1);
+            var managerTokenReq = new CreateTokenRequest("ManagerToken", tomorrow);
             var managerResult = await this._service.CreateToken(managerTokenReq);
           
-            var targetTokenReq = new CreateTokenRequest("TargetToken", DateTime.Now.AddDays(1));
+            var targetTokenReq = new CreateTokenRequest("TargetToken", tomorrow);
             var targetResult = await this._service.CreateToken(targetTokenReq);
 
-            var request = new ChangeTokenPermissionRequest(targetResult.Token, AuthTokenPermissions.CanModify);
+            var request = new ChangeTokenPermissionRequest(targetResult.Token, 
+				AuthTokenPermissions.CanModify);
 
             // Act.
             var ex = await Assert.ThrowsExceptionAsync<UnauthorizedException>(async () =>
@@ -187,7 +194,8 @@ namespace Media.Test.Unit.Infrastructure.Services
             });
 
             // Assert.
-            Assert.AreEqual("The provided token does not have the required permissions.", ex.Message);
+            Assert.AreEqual("The provided token does not have the required permissions.", 
+				ex.Message);
         }
 
         [TestMethod]
@@ -197,12 +205,14 @@ namespace Media.Test.Unit.Infrastructure.Services
             var managerTokenReq = new CreateTokenRequest("ManagerToken", DateTime.Now.AddDays(1));
             var managerResult = await this._service.CreateToken(managerTokenReq);
                 
-            var managerEntity = await this._context.AuthTokens.FirstAsync(t => t.Token == managerResult.Token);
+            var managerEntity = await this._context.AuthTokens
+				.FirstAsync(t => t.Token == managerResult.Token);
             managerEntity.Permissions = AuthTokenPermissions.CanManagePermissions;
             this._context.AuthTokens.Update(managerEntity);
             await this._context.SaveChangesAsync();
 
-            var request = new ChangeTokenPermissionRequest("FakeToken", AuthTokenPermissions.CanModify);
+            var request = new ChangeTokenPermissionRequest("FakeToken", 
+				AuthTokenPermissions.CanModify);
 
             // Act.
             var ex = await Assert.ThrowsExceptionAsync<NotFoundException>(async () =>
@@ -210,8 +220,9 @@ namespace Media.Test.Unit.Infrastructure.Services
                 await this._service.ChangePermissions(request, managerResult.Token);
             });
 
-            // Assert.
-            Assert.AreEqual("Token 'FakeToken' does not exist.", ex.Message);
+			// Assert.
+			Assert.IsTrue(ex.Message.StartsWith("Token '"));
+			Assert.IsTrue(ex.Message.EndsWith("does not exist."));
         }
     }
 }

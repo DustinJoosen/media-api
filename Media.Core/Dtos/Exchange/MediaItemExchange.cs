@@ -28,7 +28,8 @@ namespace Media.Core.Dtos.Exchange
     /// <param name="FileStream">Stream of the media.</param>
     /// <param name="FileName">File name of the media.</param>
     /// <param name="MimeType">MimeType of the media.</param>
-    public record GetMediaItemDownloadResponse(FileStream FileStream, string FileName, string MimeType);
+    public record GetMediaItemDownloadResponse(FileStream FileStream, string FileName, 
+		string MimeType);
 
     /// <summary>
     /// Output for file info.
@@ -43,7 +44,8 @@ namespace Media.Core.Dtos.Exchange
     /// </summary>
     /// <param name="Items">List of all items.</param>
     /// <param name="Pagination">Pagination for the items.</param>
-    public record GetMediaItemsByTokenResponse(List<MinimumMediaItemDto> Items, PaginationRes Pagination);
+    public record GetMediaItemsByTokenResponse(List<MinimumMediaItemDto> Items, 
+		PaginationRes Pagination);
 
     /// <summary>
     /// Input for media modification.

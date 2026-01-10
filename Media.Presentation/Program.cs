@@ -31,8 +31,11 @@ builder.Services.AddMemoryCache();
 builder.Services.Configure<RateLimitingOptions>(builder.Configuration.GetSection("RateLimiting"));
 builder.Services.Configure<UploadPolicyOptions>(builder.Configuration.GetSection("UploadPolicy"));
 
+// Set the kestrel limit to the max file size + 1. Then the middleware can catch it and give 
+// an appropriate message back.
+var maxFileSize = builder.Configuration["UploadPolicy:MaxFileSize"];
 builder.WebHost.ConfigureKestrel(options =>
-    options.Limits.MaxRequestBodySize = long.Parse(builder.Configuration["UploadPolicy:MaxFileSize"] + 1 ?? "-1"));
+    options.Limits.MaxRequestBodySize = long.Parse(maxFileSize + 1 ?? "-1"));
 
 builder.Services.AddCors(opt =>
 {

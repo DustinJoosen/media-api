@@ -11,7 +11,8 @@ namespace Media.Test.Unit.Presentation.Attributes
     [TestClass]
     public class TokenRequiredAttributeTests
     {
-        private static AuthorizationFilterContext CreateAuthorizationContext(string? authHeader = null)
+        private static AuthorizationFilterContext CreateAuthorizationContext(
+			string? authHeader = null)
         {
             var context = new DefaultHttpContext();
 

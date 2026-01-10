@@ -7,7 +7,8 @@ namespace Media.Infrastructure
 {
     public static class ConfigureServices
     {
-        public static IServiceCollection ConfigureInfrastructure(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection ConfigureInfrastructure(this IServiceCollection services,
+			IConfiguration configuration)
         {
             services.AddScoped<IAuthTokenService, AuthTokenService>();
             services.AddScoped<IMediaItemService, MediaItemService>();

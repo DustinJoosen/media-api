@@ -22,10 +22,7 @@ namespace Media.Core.Dtos.Exchange
     /// <param name="ExpiresAt">Expiration date.</param>
     /// <param name="IsActive">If the token is active.</param>
     /// <param name="Permissions">Permissions of the token.</param>
-    public record FindTokenInfoResponse(
-        string Name, 
-        DateTime? ExpiresAt, 
-        bool IsActive, 
+    public record FindTokenInfoResponse(string Name, DateTime? ExpiresAt, bool IsActive,
         AuthTokenPermissions Permissions);
 
     /// <summary>

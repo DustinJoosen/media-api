@@ -3,8 +3,8 @@
 namespace Media.Presentation.Middleware
 {
     /// <summary>
-    /// Middleware that logs all HTTP requests that are made. It saves the timestamp, method, path,
-    /// Auth key, body (if applicable).
+    /// Middleware that logs all HTTP requests that are made. It saves the timestamp,
+	/// method, path, auth key, and body (if applicable).
     /// </summary>
     public class LoggingMiddleware
     {
@@ -18,7 +18,7 @@ namespace Media.Presentation.Middleware
         }
 
         /// <summary>
-        /// Logs the request that is made. Log the important information through the default ILogger.
+        /// Logs the request that is made through the default ILogger.
         /// </summary>
         public async Task InvokeAsync(HttpContext context)
         {
@@ -39,8 +39,10 @@ namespace Media.Presentation.Middleware
                 context.Request.Body.Position = 0;
             }
 
-            this._logger.LogInformation("Request {@Timestamp}: {@Method} {@Path}, Auth: {@Auth}, Body: {@Body}",
-                timestamp, method, path, authHeader ?? "none", body != null ? this.Truncate(body, 200) : "empty");
+			body = body != null ? this.Truncate(body, 200) : "Empty";
+            this._logger.LogInformation("Request {@Timestamp}: {@Method} {@Path}, Auth: {@Auth}, " +
+				"Body: {@Body}",
+                timestamp, method, path, authHeader ?? "none", body);
 
             await this._next(context);
         }

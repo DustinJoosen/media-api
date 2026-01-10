@@ -39,7 +39,8 @@ namespace Media.Persistence
             return base.SaveChanges();
         }
 
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public override async Task<int> SaveChangesAsync(
+			CancellationToken cancellationToken = default)
         {
             // Update all entities their CreatedOn and UpdatedOn fields.
             foreach (var entity in this.ChangeTracker.Entries())

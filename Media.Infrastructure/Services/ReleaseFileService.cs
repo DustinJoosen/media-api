@@ -12,7 +12,9 @@ namespace Media.Infrastructure.Services
         /// Uploads a formfile to the file storage.
         /// </summary>
         /// <param name="formFile">File to upload.</param>
-        public virtual async Task UploadFile(Guid id, IFormFile formFile, CancellationToken cancellationToken = default)
+        /// <param name="cancellationToken">Token to observe for cancellation requests.</param>
+        public virtual async Task UploadFile(Guid id, IFormFile formFile, 
+            CancellationToken cancellationToken = default)
         {
             if (formFile == null || formFile.Length == 0)
                 throw new BadRequestException(ErrorMessages.FileNullOrEmpty());
@@ -32,7 +34,7 @@ namespace Media.Infrastructure.Services
         }
 
         /// <summary>
-        /// Gets the filestream. If it can't be previewed it returns notfound.png
+        /// Gets the filestream. If it can't be previewed it returns notfound.png.
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
@@ -45,14 +47,14 @@ namespace Media.Infrastructure.Services
             if (!filePath.StartsWith(rootFolder, StringComparison.OrdinalIgnoreCase))
                 throw new UnauthorizedAccessException(ErrorMessages.AccessToFileDenied());
 
-            if (!this.CanPreview(filePath))
+            if (!CanPreview(filePath))
                 filePath = Path.Combine(rootFolder, "notfound.png");
 
             return new(File.OpenRead(filePath));
         }
 
         /// <summary>
-        /// Gets the filestream. If it can't be previewed it returns notfound.png
+        /// Gets the filestream. If it can't be previewed it returns notfound.png.
         /// </summary>
         /// <param name="id">Id of the specified media item.</param>
         /// <returns>Metadata of the file: filestream, name, and mimetype.</returns>
@@ -60,7 +62,7 @@ namespace Media.Infrastructure.Services
         {
             var filePath = this.GetFirstFileFromId(id);
             var fileName = Path.GetFileName(filePath);
-            var mimeType = this.GetMimeType(filePath);
+            var mimeType = GetMimeType(filePath);
 
             return new GetMediaItemDownloadResponse(File.OpenRead(filePath), fileName, mimeType);
         }
@@ -68,7 +70,7 @@ namespace Media.Infrastructure.Services
         /// <summary>
         /// Recursively deletes the folder of the given item.
         /// </summary>
-        /// <param name="id">Id of the folder to delete</param>
+        /// <param name="id">Id of the folder to delete.</param>
         public void DeleteFolder(Guid id)
         {
             var guidFolder = this.GetFullGuidFolder(id);
@@ -82,7 +84,7 @@ namespace Media.Infrastructure.Services
         /// <summary>
         /// Gets the first (hopefully only) file in the folder.
         /// </summary>
-        /// <param name="id">Id of the folder to find</param>
+        /// <param name="id">Id of the folder to find.</param>
         /// <returns>Full filepath of the first file.</returns>
         protected virtual string GetFirstFileFromId(Guid id)
         {
@@ -132,7 +134,7 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="filePath">Filepath to check the extension of.</param>
         /// <returns>Correct mimetype.</returns>
-        private string GetMimeType(string filePath)
+        private static string GetMimeType(string filePath)
         {
             var extension = Path.GetExtension(filePath).ToLower();
             return extension switch
@@ -156,7 +158,7 @@ namespace Media.Infrastructure.Services
         /// </summary>
         /// <param name="filePath">Filepath to check the preview ability of.</param>
         /// <returns>Whether a file can be previewed.</returns>
-        private bool CanPreview(string filePath)
+        private static bool CanPreview(string filePath)
         {
             var extension = Path.GetExtension(filePath).ToLower();
             var previewAllowedOptions = new List<string>([".jpg", ".jpeg", ".png"]);

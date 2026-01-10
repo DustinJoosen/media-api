@@ -46,13 +46,19 @@ namespace Media.Test.Integration.Presentation.Controllers
                 var scope = this._factory.Services.CreateScope();
                 var dbContext = scope.ServiceProvider.GetRequiredService<MediaDbContext>();
 
-                var authToken = new AuthToken { Name = "Test Token", Token = this._token, IsActive = true, Permissions = AuthTokenPermissions.CanManagePermissions };
+                var authToken = new AuthToken { 
+					Name = "Test Token", 
+					Token = this._token, 
+					IsActive = true, 
+					Permissions = AuthTokenPermissions.CanManagePermissions 
+				};
                 dbContext.AuthTokens.Add(authToken);
                 await dbContext.SaveChangesAsync();
             } catch { }
 
             // Add token to default authorization header.
-            this._client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", this._token);
+            this._client.DefaultRequestHeaders
+				.TryAddWithoutValidation("Authorization", this._token);
         }
 
         [TestCleanup]
@@ -101,7 +107,10 @@ namespace Media.Test.Integration.Presentation.Controllers
         public async Task PUT_ChangePermissions_ReturnsOk()
         {
             // Arrange.
-            var payload = new ChangeTokenPermissionRequest(this._token, AuthTokenPermissions.CanManagePermissions);
+            var payload = new ChangeTokenPermissionRequest(
+				this._token, 
+				AuthTokenPermissions.CanManagePermissions);
+
             var request = new HttpRequestMessage(HttpMethod.Put, "/tokens/change-permissions")
             {
                 Content = JsonContent.Create(payload)
@@ -114,7 +123,7 @@ namespace Media.Test.Integration.Presentation.Controllers
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
             var content = await response.Content.ReadAsStringAsync();
-            Assert.AreEqual($"Token '{this._token}' has been given new permissions.", content);
+            Assert.AreEqual($"Token has been given new permissions.", content);
         }
 
         [TestMethod]
@@ -135,7 +144,8 @@ namespace Media.Test.Integration.Presentation.Controllers
             // Clean.
             var cleanReq = new CreateTokenRequest("Creation Test Token", null);
             var cleanRes = await this._client.PostAsJsonAsync("/tokens/create-token", request);
-            this._token = (await cleanRes.Content.ReadFromJsonAsync<CreateTokenResponse>())?.Token ?? this._token;
+            this._token = (await cleanRes.Content.ReadFromJsonAsync<CreateTokenResponse>())?.Token 
+				?? this._token;
         }
     }
 }

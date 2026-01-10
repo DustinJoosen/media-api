@@ -55,7 +55,8 @@ namespace Media.Test.Unit.Presentation.Attributes
             this._context.SaveChanges();
         }
 
-        private static AuthorizationFilterContext CreateAuthorizationContext(IAuthTokenService service, string? authHeader = null)
+        private static AuthorizationFilterContext CreateAuthorizationContext(
+			IAuthTokenService service, string? authHeader = null)
         {
             var context = new DefaultHttpContext();
 
@@ -75,7 +76,8 @@ namespace Media.Test.Unit.Presentation.Attributes
         {
             // Arrange.
             var attribute = new TokenValidAttribute();
-            var context = TokenValidAttributeTests.CreateAuthorizationContext(this._service, "VALID_TOKEN");
+            var context = TokenValidAttributeTests.CreateAuthorizationContext(this._service, 
+				"VALID_TOKEN");
 
             // Act.
             await attribute.OnAuthorizationAsync(context);
@@ -105,7 +107,8 @@ namespace Media.Test.Unit.Presentation.Attributes
         {
             // Arrange.
             var attribute = new TokenValidAttribute();
-            var context = TokenValidAttributeTests.CreateAuthorizationContext(this._service, "INACTIVE_TOKEN");
+            var context = TokenValidAttributeTests.CreateAuthorizationContext(this._service, 
+				"INACTIVE_TOKEN");
 
             // Act.
             var ex = await Assert.ThrowsExceptionAsync<UnauthorizedException>(async () =>
@@ -122,7 +125,8 @@ namespace Media.Test.Unit.Presentation.Attributes
         {
             // Arrange.
             var attribute = new TokenValidAttribute();
-            var context = TokenValidAttributeTests.CreateAuthorizationContext(this._service, "EXPIRED_TOKEN");
+            var context = TokenValidAttributeTests.CreateAuthorizationContext(this._service, 
+				"EXPIRED_TOKEN");
 
             // Act.
             var ex = await Assert.ThrowsExceptionAsync<UnauthorizedException>(async () =>

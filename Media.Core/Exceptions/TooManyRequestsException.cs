@@ -6,7 +6,8 @@
         public int Remaining {get; set;}
         public int RetryAfterSeconds { get; set; }
 
-        public TooManyRequestsException(string message, int limit, int remaining, int retryAfterSeconds) : base(message)
+        public TooManyRequestsException(string message, int limit, int remaining, 
+			int retryAfterSeconds) : base(message)
         {
             this.Limit = limit;
             this.Remaining = remaining;

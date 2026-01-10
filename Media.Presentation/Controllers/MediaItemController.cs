@@ -24,7 +24,8 @@ namespace Media.Presentation.Controllers
 		[HttpGet]
 		[Route("{id}/preview")]
 		[ProducesResponseType(typeof(FileStream), StatusCodes.Status200OK)]
-		public async Task<FileStream> GetFileStreamPreview([FromRoute] Guid id, 
+		public async Task<FileStream> GetFileStreamPreview(
+			[FromRoute] Guid id, 
 			CancellationToken cancellationToken = default)
 		{
 			var mediaFile = await this._mediaItemService
@@ -38,7 +39,8 @@ namespace Media.Presentation.Controllers
 		/// </summary>
 		[HttpGet]
 		[Route("{id}/download")]
-		public async Task<FileStreamResult> GetFileStreamDownload([FromRoute] Guid id, 
+		public async Task<FileStreamResult> GetFileStreamDownload(
+			[FromRoute] Guid id, 
 			CancellationToken cancellationToken = default)
 		{
 			var mediaFile = await this._mediaItemService
@@ -55,7 +57,8 @@ namespace Media.Presentation.Controllers
 		/// </summary>
 		[HttpGet]
 		[Route("{id}/info")]
-		public async Task<GetMediaItemInfoResponse> GetFileInfo([FromRoute] Guid id, 
+		public async Task<GetMediaItemInfoResponse> GetFileInfo(
+			[FromRoute] Guid id, 
 			CancellationToken cancellationToken = default)
 		{
 			var mediaFile = await this._mediaItemService.GetInfo(id, cancellationToken);
@@ -97,7 +100,8 @@ namespace Media.Presentation.Controllers
 		[HttpPut]
 		[Route("{id}/modify")]
 		[TokenValid]
-		public async Task<IActionResult> ModifyMediaItem([FromRoute] Guid id, 
+		public async Task<IActionResult> ModifyMediaItem(
+			[FromRoute] Guid id, 
 			[FromBody] ModifyMediaItemRequest modifyMediaItemReq, 
 			CancellationToken cancellationToken = default)
 		{
@@ -114,7 +118,8 @@ namespace Media.Presentation.Controllers
 		[HttpDelete]
 		[Route("{id}/delete")]
 		[TokenValid]
-		public async Task<IActionResult> DeleteMediaItem([FromRoute] Guid id, 
+		public async Task<IActionResult> DeleteMediaItem(
+			[FromRoute] Guid id, 
 			CancellationToken cancellationToken = default)
 		{
 			string token = this.Request.Headers.Authorization.ToString();

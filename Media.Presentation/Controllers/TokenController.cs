@@ -23,7 +23,8 @@ namespace Media.Presentation.Controllers
 		/// </summary>
 		[HttpPost]
 		[Route("create-token")]
-		public async Task<CreateTokenResponse> CreateToken(CreateTokenRequest tokenReq, 
+		public async Task<CreateTokenResponse> CreateToken(
+			[FromBody] CreateTokenRequest tokenReq, 
 			CancellationToken cancellationToken = default) =>
 			await this._tokenService.CreateToken(tokenReq, cancellationToken);
 
@@ -49,7 +50,7 @@ namespace Media.Presentation.Controllers
 		[Route("change-permissions")]
 		[TokenRequired]
 		public async Task<IActionResult> ChangeTokenPermission(
-			ChangeTokenPermissionRequest changeTokenPermissionReq, 
+			[FromBody] ChangeTokenPermissionRequest changeTokenPermissionReq, 
 			CancellationToken cancellationToken = default)
 		{
 			string token = this.Request.Headers.Authorization.ToString();

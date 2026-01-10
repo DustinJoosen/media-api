@@ -12,9 +12,9 @@ namespace Media.Test.Integration.Presentation.Controllers
     [TestClass]
     public class TokenControllerTests
     {
-        private WebApplicationFactory<Program> _factory;
-        private HttpClient _client;
-        private string _token;
+        private WebApplicationFactory<Program> _factory = null!;
+        private HttpClient _client = null!;
+        private string _token = null!;
 
         [TestInitialize]
         public async Task Setup()

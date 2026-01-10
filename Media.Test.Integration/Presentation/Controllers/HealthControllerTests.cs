@@ -9,8 +9,8 @@ namespace Media.Test.Integration.Presentation.Controllers
     [TestClass]
     public class HealthControllerTests
     {
-        private static WebApplicationFactory<Program> _factory;
-        private static HttpClient _client;
+        private static WebApplicationFactory<Program> _factory = null!;
+        private static HttpClient _client = null!;
 
         [ClassInitialize]
         public static void ClassInitialize(TestContext context)

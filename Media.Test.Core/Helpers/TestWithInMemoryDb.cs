@@ -8,9 +8,9 @@ namespace Media.Test.Core.Helpers
     [TestClass]
     public class TestWithInMemoryDb
     {
-        protected MediaDbContext _context;
+        protected MediaDbContext _context = null!;
 
-        [TestInitialize]
+		[TestInitialize]
         protected virtual void BaseSetup()
         {
             var options = new DbContextOptionsBuilder<MediaDbContext>()

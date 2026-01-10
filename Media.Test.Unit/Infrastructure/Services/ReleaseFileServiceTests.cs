@@ -9,8 +9,8 @@ namespace Media.Test.Unit.Infrastructure.Services
     [TestClass]
     public class ReleaseFileServiceTests : TestWithInMemoryDb
     {
-        private IFileService _fileService;
-        private string _rootPath;
+        private IFileService _fileService = null!;
+        private string _rootPath = null!;
 
         [TestInitialize]
         public void Setup()

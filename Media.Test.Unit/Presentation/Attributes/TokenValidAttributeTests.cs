@@ -17,8 +17,8 @@ namespace Media.Test.Unit.Presentation.Attributes
     [TestClass]
     public class TokenValidAttributeTests
     {
-        private MediaDbContext _context;
-        private IAuthTokenService _service;
+        private MediaDbContext _context = null!;
+        private IAuthTokenService _service = null!;
 
         [TestInitialize]
         public void Setup()

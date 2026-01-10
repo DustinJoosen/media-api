@@ -14,20 +14,20 @@ namespace Media.Test.Unit.Infrastructure.Services
     [TestClass]
     public class MediaItemServiceTests : TestWithInMemoryDb
     {
-        private AuthTokenService _authTokenService;
-        private MediaItemService _mediaItemService;
+        private AuthTokenService _authTokenService = null!;
+        private MediaItemService _mediaItemService = null!;
 
         private string _testingToken = string.Empty;
-
-        private IOptions<UploadPolicyOptions> _options;
+		private IOptions<UploadPolicyOptions> _options = Options.Create(new UploadPolicyOptions(
+			20,
+			new List<string> { ".exe" }
+		));
 
         [TestInitialize]
         public async Task Setup()
         {
             this.BaseSetup();
 
-            this._options = Options.Create(new UploadPolicyOptions(
-				20, new List<string> { ".exe" }));
             this._authTokenService = new AuthTokenService(this._context);
             this._mediaItemService = new MediaItemService(
                 this._authTokenService,

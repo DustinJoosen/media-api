@@ -11,7 +11,7 @@ namespace Media.Test.Unit.Infrastructure.Services
     [TestClass]
     public class AuthTokenServiceTests : TestWithInMemoryDb
     {
-        private IAuthTokenService _service;
+        private IAuthTokenService _service = null!;
 
         [TestInitialize]
         public void Setup()

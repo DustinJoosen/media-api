@@ -20,9 +20,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Media.Test.Unit", "Media.Test.Unit\Media.Test.Unit.csproj", "{02A6178B-1F56-4EC1-8C66-C86C43682C5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Media.Test.Integration", "Media.Test.Integration\Media.Test.Integration.csproj", "{DB81CF64-F9BC-44E9-8191-6876B48CE7F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Media.Test.Integration", "Media.Test.Integration\Media.Test.Integration.csproj", "{DB81CF64-F9BC-44E9-8191-6876B48CE7F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Media.Test.Core", "Media.Test.Core\Media.Test.Core.csproj", "{C95BA0FA-4D58-4F0F-951E-C077A55EF90A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Media.Test.Core", "Media.Test.Core\Media.Test.Core.csproj", "{C95BA0FA-4D58-4F0F-951E-C077A55EF90A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

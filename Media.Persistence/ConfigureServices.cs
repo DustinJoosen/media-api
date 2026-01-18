@@ -11,7 +11,8 @@ namespace Media.Persistence
 		{
 			services.AddDbContext<MediaDbContext>(options =>
 			{
-				options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+				var connString = configuration.GetConnectionString("DefaultConnection");
+				options.UseMySql(connString, ServerVersion.AutoDetect(connString));
 			});
 
 			return services;

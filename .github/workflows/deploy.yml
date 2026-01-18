@@ -18,32 +18,23 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
 
-      - name: Build project
-        working-directory: ./Media.Presentation
-        run: |
-          dotnet restore
-          dotnet publish -c Release -o ../media-artifact
+      - name: Build Docker image
+        run: docker build -t media-api .
 
-      - name: Package
-        run: |
-          tar czf media-artifact.tar.gz -C media-artifact .
+      - name: Save Docker image to tarball
+        run: docker save media-api -o media-api.tar
 
       - name: Add server to known_hosts
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
 
+      - name: Upload Docker image to server
+        run: scp media-api.tar ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/
 
-      - name: Upload artifact
-        run: |
-          scp media-artifact.tar.gz \
-            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/tmp/
-
-      - name: Deploy and restart service
-        run: |
-          ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
-            rm -r /home/syter/Services/media/media-api &&
-            mkdir -p /home/syter/Services/media/media-api &&
-            tar xzf /tmp/media-artifact.tar.gz -C /home/syter/Services/media/media-api &&
-            sudo systemctl restart media-api.service
-          "
+      - name: Deploy on server
+        run: ssh ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} "
+          docker rm -f media-api || true &&
+          docker load -i /tmp/media-api.tar &&
+          docker image prune -f || true &&
+          docker run -d --name media-api -p 9001:9001 --restart unless-stopped media-api"

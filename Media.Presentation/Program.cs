@@ -52,7 +52,7 @@ builder.Services.ConfigurePersistence(builder.Configuration);
 builder.Services.ConfigureInfrastructure(builder.Configuration);
 
 // Start the Runtime right away instead of when /health is first called.
-HealthController.AppRunningTime = DateTime.Now;
+HealthController.AppRunningTime = DateTime.UtcNow;
 
 var app = builder.Build();
 

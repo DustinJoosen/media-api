@@ -60,7 +60,7 @@ namespace Media.Presentation.Controllers
 
             // Uptime of the API.
             var startTime = AppRunningTime.ToString("yyyy-MM-dd HH:mm:ss");
-            var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            var timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
 
             var uptimeSpan = DateTime.Now - AppRunningTime;
             var uptime = $"" +
